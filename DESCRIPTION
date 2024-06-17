@@ -13,3 +13,5 @@ RoxygenNote: 7.2.1
 Depends: 
     R (>= 2.10)
 LazyData: true
+URL: https://github.com/institutosoudapaz/isdp.armas
+BugReports: https://github.com/institutosoudapaz/isdp.armas/issues
