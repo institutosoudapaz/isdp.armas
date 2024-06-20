@@ -78,6 +78,7 @@ incluir_marcas <- function(x){
     stringr::str_detect(x, regex_marcas$regex[76]) ~ regex_marcas$MARCA_ARMA_V2[76],
     stringr::str_detect(x, regex_marcas$regex[77]) ~ regex_marcas$MARCA_ARMA_V2[77],
     stringr::str_detect(x, regex_marcas$regex[78]) ~ regex_marcas$MARCA_ARMA_V2[78],
+    is.na(x) | dtct(x, "semmarca|null|n/c|nãoconsta|s/marca|nãoaparen|ignorada|nãopossui|desconheci|nc|s/m|naoaparen") ~ "N/A",
     TRUE ~ NA_character_
   )
 }

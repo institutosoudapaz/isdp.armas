@@ -1,3 +1,5 @@
+library(tidyverse)
+
 texto <- 'reclassifica_marca <- function(coluna) {
   dplyr::case_when(
     coluna %in% c(
@@ -406,3 +408,4 @@ regex_marcas <- remake |>
   )
 
 usethis::use_data(regex_marcas, overwrite = TRUE)
+writexl::write_xlsx(regex_marcas, "data-raw/tabelas_regex/regex_marcas.xlsx")

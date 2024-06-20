@@ -1,8 +1,6 @@
-## code to prepare `DATASET` dataset goes here
-
 library(tidyverse)
 
-usethis::use_data(DATASET, overwrite = TRUE)
+devtools::load_all()
 
 # dados_sp2 <- readxl::read_excel(
 #   "data-raw/SP pos recurso 23042024SIC 55366246800 - Recurso_xlsx.xlsx",
@@ -11,9 +9,46 @@ usethis::use_data(DATASET, overwrite = TRUE)
 dados_sp2 <- readRDS("data-raw/dados_sp2.rds")
 
 ocorrencias <- dados_sp2 |>
-  distinct(
-    ID_DELEGACIA, CIDADE, ANO_BO, NUM_BO
-  )
+  mutate(
+    crime_unificado = gera_crime_unificado(RUBRICA, DESDOBRAMENTO, DESCR_CONDUTA)
+  ) |>
+  group_by(
+    ID_DELEGACIA, CIDADE, ANO_BO, NUM_BO,
+    NOME_DEPARTAMENTO_CIRC,
+    NOME_SECCIONAL_CIRC,
+    NOME_DELEGACIA_CIRC,
+    NOME_MUNICIPIO_CIRC,
+    DESCR_TIPO_BO,
+    DATA_OCORRENCIA_BO,
+    HORA_OCORRENCIA_BO,
+    DESCRICAO_APRESENTACAO,
+    DATAHORA_REGISTRO_BO,
+    DATA_COMUNICACAO_BO,
+    DATAHORA_IMPRESSAO_BO,
+    DESCR_PERIODO,
+    AUTORIA_BO,
+    FLAG_INTOLERANCIA,
+    TIPO_INTOLERANCIA,
+    FLAG_FLAGRANTE
+    #RUBRICA,
+    #DESCR_CONDUTA,
+    #DESDOBRAMENTO,
+    #FLAG_STATUS
+    #BAIRRO,
+    #DESCR_TIPOLOCAL,
+    #DESCR_SUBTIPOLOCAL,
+    #CEP,
+    #LOGRADOURO,
+    #NUMERO_LOGRADOURO,
+    #DESCR_EXAME
+  ) |>
+  summarise(
+    crimes_tentados = paste0(unique(crime_unificado[FLAG_STATUS != "CONSUMADO"]), collapse = ", "),
+    crimes_consumados = paste0(unique(crime_unificado[FLAG_STATUS == "CONSUMADO"]), collapse = ", "),
+    endereco1 = stringr::str_glue("{first(unique(LOGRADOURO))}, {first(unique(NUMERO_LOGRADOURO))}, {first(unique(BAIRRO))}, {first(unique(CEP))}"),
+    endereco2 =stringr::str_glue("{first(unique(LOGRADOURO)[-1])}, {first(unique(NUMERO_LOGRADOURO)[-1])}, {first(unique(BAIRRO)[-1])}, {first(unique(CEP)[-1])}"),
+  ) |>
+  ungroup()
 
 armas <- dados_sp2 |>
   distinct(
@@ -24,6 +59,9 @@ armas <- dados_sp2 |>
     NUMERO_ARMA,
     MARCA_ARMA,
     DESCR_ARMA_FOGO
+  ) |>
+  mutate(
+    FLAG_ARMA = !str_detect(DESCR_ARMA_FOGO, "Outros|Colete")
   )
 
 estatistica_oficial <- tibble(
@@ -35,53 +73,29 @@ comparacao_contagens <- ocorrencias |>
   count(ANO_BO) |>
   rename(numero_ocorrencias = n) |>
   left_join(
-    apreensoes |>
-      count(ANO_BO) |>
+    armas |>
+      group_by(ANO_BO) |>
+      summarise(
+        n = n(),
+        armas_distintas_apreendidas = sum(FLAG_ARMA, na.rm = TRUE)
+      ) |>
       rename(
-        armas_distintas_apreendidas = n
+        objetos_distintas_apreendidas = n
       )
   ) |>
   left_join(
     estatistica_oficial
   )
 
-armas |>
-  mutate(
-    MARCA_ARMA = tolower(MARCA_ARMA)
-  ) |>
-  left_join(
-    distinct(remake |>
-               mutate(
-                 MARCA_ARMA = tolower(MARCA_ARMA)
-               ), MARCA_ARMA, .keep_all = TRUE)
-  ) |>
-  count(
-    MARCA_ARMA, MARCA_ARMA_V2
-  ) |>
-  View()
+writexl::write_xlsx(comparacao_contagens, "data-raw/comparacao_contagens.xlsx")
 
-regex_marcas<- remake |>
-  mutate(
-    MARCA_ARMA = tolower(MARCA_ARMA)
-  ) |>
-  group_by(MARCA_ARMA_V2) |>
-  summarise(
-    regex = regex(paste0(unique(MARCA_ARMA), collapse = "|"), ignore_case = TRUE)
-  ) |>
-  arrange(
-    MARCA_ARMA_V2
-  )
+mascara_padroes_taurus <- armas$NUMERO_ARMA |> stringr::str_to_upper() |> aplica_padrao_taurus()
 
 armas_arrumado <- armas |>
   mutate(
     MARCA_ARMA = tolower(MARCA_ARMA) |> stringr::str_remove_all("[:space:]"),
     MARCA_ARMA_V2 = incluir_marcas(MARCA_ARMA),
     CALIBRE_ARMA_V2 = incluir_calibres(CALIBRE_ARMA)
-  )
-
-armas_arrumado |>
-  count(CALIBRE_ARMA, CALIBRE_ARMA_V2) |> View()
-
-usethis::use_data(regex_marcas)
-
+  ) |>
+  bind_cols(mascara_padroes_taurus)
 

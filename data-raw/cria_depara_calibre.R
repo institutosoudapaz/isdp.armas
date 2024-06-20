@@ -1,3 +1,5 @@
+library(tidyverse)
+
 texto <- 'renomeia_calibre <- function(coluna) {
   dplyr::case_when(
     coluna %in% c("3.6", ".3.6", "3,6", ".3,6") ~ "3,6 mm",
@@ -336,3 +338,4 @@ regex_calibres <- remake |>
   )
 
 usethis::use_data(regex_calibres, overwrite = TRUE)
+writexl::write_xlsx(regex_calibres, "data-raw/tabelas_regex/regex_calibres.xlsx")
