@@ -1,5 +1,3 @@
-library(tidyverse)
-
 texto <- 'renomeia_calibre <- function(coluna) {
   dplyr::case_when(
     coluna %in% c("3.6", ".3.6", "3,6", ".3,6") ~ "3,6 mm",
@@ -283,59 +281,37 @@ texto <- 'renomeia_calibre <- function(coluna) {
     ) ~ "45",
 
     coluna %in% c(".50", "50mm" ,"12.7", "12,7", ".50 BMG", ".50BMG",".50 BMG 7×99mm NATO"
-    ) ~ ".50 BMG\12.7×99mm NATO",
-
-    TRUE ~ "OUTROS")
+    ) ~ ".50 BMG\12.7×99mm NATO")
 }'
 
-valores <- texto |>
+combinacoes <- texto |>
   stringr::str_replace_all("\n","") |>
-  stringr::str_replace_all("[:space:]+","") |>
-  stringr::str_extract_all("%in%c(.+)") |>
+  stringr::str_extract_all("%in% c(.+)") |>
   stringr::str_remove_all("coluna") |>
-  stringr::str_split("%in%")
+  stringr::str_split("%in%") |> 
+  purrr::pluck(1) |> 
+  stringr::str_squish() |> 
+  stringr::str_remove_all("^c\\(|\\(|\\)|\\{|\\}")
+  
 
-remake <- tibble(
-  coluna = valores[[1]]
-) |>
-  separate(coluna, into = c("chaves", "classes"), sep = "~") |>
-  mutate(
-    chaves = purrr::map(chaves, function(x){
-      eval(parse(text = x))
-    }),
-    classes = classes |>
-      stringr::str_remove_all('"|,$')
-  ) |>
-  unnest(chaves) |>
-  mutate(
-    classes = ifelse(
-      classes == "ziganaTRUE", "zigana", classes
-    )
-  ) |>
-  rename(
-    CALIBRE_ARMA = chaves,
-    CALIBRE_ARMA_V2 = classes
-  )
-
-regex_calibres <- remake |>
-  mutate(
-    CALIBRE_ARMA = tolower(CALIBRE_ARMA)
-  ) |>
-  group_by(CALIBRE_ARMA_V2) |>
-  summarise(
-    regex = CALIBRE_ARMA |>
-      unique() |>
-      stringr::str_replace_all(stringr::fixed("."), "[.]") |>
-      stringr::str_replace_all(stringr::fixed("+"), "[+]") |>
-      stringr::str_replace_all(stringr::fixed("("), "[(]") |>
-      stringr::str_replace_all(stringr::fixed(")"), "[)]") |>
-      stringr::str_replace_all(stringr::fixed("*"), "[*]") |>
-      paste0(collapse = "|") |>
-      regex(ignore_case = TRUE)
-  ) |>
-  arrange(
-    CALIBRE_ARMA_V2
-  )
-
-usethis::use_data(regex_calibres, overwrite = TRUE)
-writexl::write_xlsx(regex_calibres, "data-raw/tabelas_regex/regex_calibres.xlsx")
+tibble::tibble(
+  combinacao = combinacoes
+) |> 
+  dplyr::filter(stringr::str_detect(combinacao, "~")) |> 
+  tidyr::separate_wider_delim(
+    cols = combinacao,
+    delim = "~",
+    names = c("valor", "valor_formatado"),
+    cols_remove = FALSE
+  ) |> 
+  tidyr::separate_longer_delim(
+    cols = valor,
+    delim = stringr::regex(',[ ]?\\"')
+  ) |> 
+  dplyr::mutate(
+    valor = stringr::str_remove_all(valor, '\\"'),
+    valor = stringr::str_trim(valor),
+    valor_formatado = stringr::str_remove_all(valor_formatado, '\\"|,$'),
+    valor_formatado = stringr::str_trim(valor_formatado)
+  ) |> 
+  writexl::write_xlsx("inst/tabelas_depara/depara_calibre.xlsx")
