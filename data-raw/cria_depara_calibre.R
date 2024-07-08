@@ -1,3 +1,6 @@
+# Esse script pega um código legado enviado pelo ISDP e transforma as regras
+# em uma planilha Excel de-para de calibre.
+
 texto <- 'renomeia_calibre <- function(coluna) {
   dplyr::case_when(
     coluna %in% c("3.6", ".3.6", "3,6", ".3,6") ~ "3,6 mm",
