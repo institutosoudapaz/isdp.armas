@@ -1,5 +1,7 @@
 # Esse script pega um código legado enviado pelo ISDP e transforma as regras
 # em uma planilha Excel de-para de calibre.
+# Provavelmente nunca mais precisará ser rodado, pois futuras modificações
+# no depara de calibre poderão ser feitas diretamente na planilha gerada.
 
 texto <- 'renomeia_calibre <- function(coluna) {
   dplyr::case_when(

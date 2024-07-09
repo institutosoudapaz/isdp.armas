@@ -1,5 +1,7 @@
 # Esse script pega um código legado enviado pelo ISDP e transforma as regras
 # em uma planilha Excel de-para de marca.
+# Provavelmente nunca mais precisará ser rodado, pois futuras modificações
+# no depara de marca poderão ser feitas diretamente na planilha gerada.
 
 texto <- 'reclassifica_marca <- function(coluna) {
   dplyr::case_when(
