@@ -1,5 +1,3 @@
-library(tidyverse)
-
 texto <- 'reclassifica_marca <- function(coluna) {
   dplyr::case_when(
     coluna %in% c(
@@ -359,53 +357,37 @@ texto <- 'reclassifica_marca <- function(coluna) {
       "VICTOR SARASQUETA EIBAR", "Victor Sarasqueta Eibar", "Victor Sarasqueta", "Eibar", "EIBAR"
     ) ~ "victor sarasqueta",
     coluna %in% "ZABALA HERMANOS" ~ "zabala hermanos",
-    coluna %in% "ZIGANA" ~ "zigana",
-    TRUE ~ coluna
+    coluna %in% "ZIGANA" ~ "zigana"
   )
 }'
 
-valores <- texto |>
-  stringr::str_replace_all("\n","") |>
-  stringr::str_replace_all("[:space:]+","") |>
-  stringr::str_extract_all("%in%c(.+)") |>
+combinacoes <- texto |>
+  stringr::str_replace_all("\n", "") |>
+  stringr::str_extract_all("%in% c(.+)") |>
   stringr::str_remove_all("coluna") |>
-  stringr::str_split("%in%")
+  stringr::str_split("%in%") |>
+  purrr::pluck(1) |>
+  stringr::str_squish() |>
+  stringr::str_remove_all("^c\\(|\\(|\\)|\\{|\\}")
 
-remake <- tibble(
-  coluna = valores[[1]]
+tibble::tibble(
+  combinacao = combinacoes
 ) |>
-  separate(coluna, into = c("chaves", "classes"), sep = "~") |>
-  mutate(
-    chaves = purrr::map(chaves, function(x){
-      x |>
-        stringr::str_extract_all('"[a-zA-Z]+"', simplify = TRUE) |>
-        stringr::str_remove_all('"')
-      }),
-    classes = classes |>
-      stringr::str_remove_all('"|,')
+  dplyr::filter(stringr::str_detect(combinacao, "~")) |>
+  tidyr::separate_wider_delim(
+    cols = combinacao,
+    delim = "~",
+    names = c("valor", "valor_formatado"),
+    cols_remove = FALSE
   ) |>
-  unnest(chaves) |>
-  mutate(
-    classes = ifelse(
-      classes == "ziganaTRUE", "zigana", classes
-    )
+  tidyr::separate_longer_delim(
+    cols = valor,
+    delim = stringr::regex(',[ ]?\\"')
   ) |>
-  rename(
-    MARCA_ARMA = chaves,
-    MARCA_ARMA_V2 = classes
-  )
-
-regex_marcas <- remake |>
-  mutate(
-    MARCA_ARMA = tolower(MARCA_ARMA)
+  dplyr::mutate(
+    valor = stringr::str_remove_all(valor, '\\"'),
+    valor = stringr::str_trim(valor),
+    valor_formatado = stringr::str_remove_all(valor_formatado, '\\"|,$'),
+    valor_formatado = stringr::str_trim(valor_formatado)
   ) |>
-  group_by(MARCA_ARMA_V2) |>
-  summarise(
-    regex = regex(paste0(unique(MARCA_ARMA), collapse = "|"), ignore_case = TRUE)
-  ) |>
-  arrange(
-    MARCA_ARMA_V2
-  )
-
-usethis::use_data(regex_marcas, overwrite = TRUE)
-writexl::write_xlsx(regex_marcas, "data-raw/tabelas_regex/regex_marcas.xlsx")
+  writexl::write_xlsx("inst/tabelas_depara/depara_marca.xlsx")
