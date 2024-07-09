@@ -19,7 +19,7 @@ dplyr::glimpse(dados_armas_2019_2023)
 dados_armas <- dplyr::bind_rows(
   dados_armas_2018,
   dados_armas_2019_2023
-)
+) # incluir cod ibge
 
 dados_armas |>
   readr::write_rds("inst/dados_rj/dados_armas_rj.rds")
@@ -52,7 +52,7 @@ dplyr::glimpse(dados_ocorrencias_2019_2023)
 dados_ocorrencias <- dplyr::bind_rows(
   dados_ocorrencias_2018,
   dados_ocorrencias_2019_2023
-)
+) # incluir cod ibge
 
 dados_ocorrencias |>
   readr::write_rds("inst/dados_rj/dados_ocorrencias_rj.rds")
