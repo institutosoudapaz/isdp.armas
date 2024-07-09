@@ -169,8 +169,11 @@ dplyr::bind_rows(
   dados_sp_2022_2023
 ) |> 
   dplyr::filter(
-    !descr_arma_fogo %in% c("Outros", "Arma Branca", "Colete")
+    !descr_arma_fogo %in% c("Outros", "Arma Branca", "Colete", "Granada", "Bomba")
   ) |> 
+  dplyr::distinct() |> 
+  # incluir cod_ibge aqui
+  #
   # dplyr::count(descr_arma_fogo, sort = TRUE) |> print(n = 100)
   readr::write_rds("inst/dados_sp/dados_sp.rds", compress = "xz")
 
