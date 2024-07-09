@@ -18,11 +18,7 @@ colunas <- c(
   "descricao_apresentacao",
   "datahora_registro_bo",
   "data_comunicacao_bo",
-  "datahora_impressao_bo",
-  "descr_periodo",
   "autoria_bo",
-  "flag_intolerancia",
-  "tipo_intolerancia",
   "flag_flagrante",
   "flag_status",
   "rubrica",
@@ -36,7 +32,6 @@ colunas <- c(
   "numero_logradouro",
   "latitude",
   "longitude",
-  "descr_exame",
   "cont_pessoa",
   "descr_tipo_pessoa",
   "flag_deficiencia",
@@ -54,53 +49,61 @@ colunas <- c(
   "nacionalidade_pessoa",
   "naturalidade_pessoa",
   "descr_estado_civil",
+  "flag_vitima_violencia_domestica",
   "cont_arma",
   "descr_modo_objeto",
   "calibre_arma",
   "numero_arma",
   "marca_arma",
-  "descr_arma_fogo"
+  "descr_arma_fogo",
+  "estado_arma",
+  "nome_proprietario"
 )
 
 # Lendo bases ----------------------------------------------------------------
 
 dados_sp_2018_1 <- readxl::read_excel(
   "data-raw/dados_sp/raw/SIC 40606205187 1º Semestre 2018 Metodologia.xlsx",
-  guess_max = 40000
+  guess_max = 40000,
+  col_types = c(rep("guess", 13), "date", rep("guess", 42)) # pegar hora como date
 ) |>
   janitor::clean_names() |>
   janitor::remove_empty(c("rows", "cols")) |>
   dplyr::rename(
     autoria_bo = flag_autoria_bo
   ) |>
-  dplyr::select(dplyr::any_of(colunas)) |> 
+  dplyr::select(dplyr::any_of(colunas)) |>
   dplyr::mutate(
     numero_logradouro = as.character(numero_logradouro),
-    num_bo = as.character(num_bo)
+    num_bo = as.character(num_bo),
+    hora_ocorrencia_bo = as.character(hora_ocorrencia_bo)
   )
 
 dados_sp_2018_2 <- readxl::read_excel(
   "data-raw/dados_sp/raw/SIC 40606205187 2º semestre 2018.xlsx",
-  guess_max = 40000
+  guess_max = 40000,
+  col_types = c(rep("guess", 13), "date", rep("guess", 42)) # pegar hora como date
 ) |>
   janitor::clean_names() |>
   janitor::remove_empty(c("rows", "cols")) |>
   dplyr::rename(
     autoria_bo = flag_autoria_bo
   ) |>
-  dplyr::select(dplyr::any_of(colunas)) |> 
+  dplyr::select(dplyr::any_of(colunas)) |>
   dplyr::mutate(
-    num_bo = as.character(num_bo)
+    num_bo = as.character(num_bo),
+    hora_ocorrencia_bo = as.character(hora_ocorrencia_bo)
   )
 
 dados_sp_2019_2022 <- readxl::read_excel(
   "data-raw/dados_sp/raw/SP pre recurso armas apreendidas estadual SIC 55366246800_12042024_armas SP.xlsx",
   sheet = "Base de Dados (1)",
-  guess_max = 100000
+  guess_max = 100000,
+  col_types = c(rep("guess", 13), "date", rep("guess", 44)) # pegar hora como date
 ) |>
   janitor::clean_names() |>
   janitor::remove_empty(c("rows", "cols")) |>
-  dplyr::select(dplyr::any_of(colunas)) |> 
+  dplyr::select(dplyr::any_of(colunas)) |>
   dplyr::mutate(
     dplyr::across(
       c(latitude, longitude),
@@ -110,28 +113,29 @@ dados_sp_2019_2022 <- readxl::read_excel(
       c(latitude, longitude),
       readr::parse_number
     ),
-    num_bo = as.character(num_bo)
+    num_bo = as.character(num_bo),
+    hora_ocorrencia_bo = as.character(hora_ocorrencia_bo)
   )
 
-# será utilizada apenas para pegar a coluna NUMERO_ARMA
-dados_sp_2022_2023_pos_recurso <- readxl::read_excel(
-  "data-raw/dados_sp/raw/SP pos recurso 23042024SIC 55366246800 - Recurso.xlsx",
-  sheet = "Base de Dados (2)",
-  guess_max = 20000
-) |>
-  janitor::clean_names() |>
-  janitor::remove_empty(c("rows", "cols")) |>
-  dplyr::select(
-    id_delegacia,
-    ano_bo,
-    num_bo,
-    numero_arma
-  )
-  
+# Será utilizada apenas para pegar a coluna NUMERO_ARMA
+# dados_sp_2022_2023_pos_recurso <- readxl::read_excel(
+#   "data-raw/dados_sp/raw/SP pos recurso 23042024SIC 55366246800 - Recurso.xlsx",
+#   sheet = "Base de Dados (2)",
+#   guess_max = 20000
+# ) |>
+#   janitor::clean_names() |>
+#   janitor::remove_empty(c("rows", "cols")) |>
+#   dplyr::select(
+#     id_delegacia,
+#     ano_bo,
+#     num_bo,
+#     numero_arma
+#   )
+
 # dados_sp_2022_2023_pos_recurso |>
 #   dplyr::mutate(
 #     id = paste(id_delegacia, ano_bo, num_bo, cont_arma, cont_pessoa, sep = "_")
-#   ) |> 
+#   ) |>
 #   dplyr::distinct(id)
 
 dados_sp_2022_2023 <- readxl::read_excel(
@@ -146,7 +150,7 @@ dados_sp_2022_2023 <- readxl::read_excel(
     descr_modo_objeto = desc_objeto_modo,
     descr_estado_civil = desc_estado_civil
   ) |>
-  dplyr::select(dplyr::any_of(colunas)) |> 
+  dplyr::select(dplyr::any_of(colunas)) |>
   dplyr::mutate(
     cep = as.character(cep),
     numero_logradouro = as.character(numero_logradouro),
@@ -167,13 +171,29 @@ dplyr::bind_rows(
   dados_sp_2018_2,
   dados_sp_2019_2022,
   dados_sp_2022_2023
-) |> 
+) |>
   dplyr::filter(
     !descr_arma_fogo %in% c("Outros", "Arma Branca", "Colete", "Granada", "Bomba")
-  ) |> 
-  dplyr::distinct() |> 
-  # incluir cod_ibge aqui
-  #
+  ) |>
+  dplyr::distinct() |>
+  dplyr::mutate(
+    id_bo = "",
+    cod_ibge = "",
+    cod_ibge_circ = "",
+    ano_bo_novo = lubridate::year(data_ocorrencia_bo),
+    mes_bo = lubridate::month(data_ocorrencia_bo),
+    hora_ocorrencia_bo = stringr::str_extract(
+      hora_ocorrencia_bo,
+      "[0-9]{2}:[0-9]{2}"
+    ),
+    periodo_ocorrencia_bo = dplyr::case_when(
+      is.na(hora_ocorrencia_bo) ~ NA_character_,
+      hora_ocorrencia_bo <= "05:59" ~ "Madrugada",
+      hora_ocorrencia_bo <= "11:59" ~ "Manhã",
+      hora_ocorrencia_bo <= "17:59" ~ "Tarde",
+      TRUE ~ "Noite"
+    )
+  ) |>
   # dplyr::count(descr_arma_fogo, sort = TRUE) |> print(n = 100)
   readr::write_rds("inst/dados_sp/dados_sp.rds", compress = "xz")
 
@@ -182,5 +202,5 @@ dplyr::bind_rows(
 
 # - As colunas descr_orientacao_sexual, descr_identidade_genero e descr_estado_civil
 #   só existem a partir de 2022.
-# - A coluna descr_exame só existe até meados de 2022.
 # - A coluna descr_patologia só existe a partir de 2019.
+# - O ano_bo_novo foi criado pois não confiamos na informação da coluna ano_bo.
