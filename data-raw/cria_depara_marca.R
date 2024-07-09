@@ -1,3 +1,6 @@
+# Esse script pega um código legado enviado pelo ISDP e transforma as regras
+# em uma planilha Excel de-para de marca.
+
 texto <- 'reclassifica_marca <- function(coluna) {
   dplyr::case_when(
     coluna %in% c(
@@ -357,7 +360,8 @@ texto <- 'reclassifica_marca <- function(coluna) {
       "VICTOR SARASQUETA EIBAR", "Victor Sarasqueta Eibar", "Victor Sarasqueta", "Eibar", "EIBAR"
     ) ~ "victor sarasqueta",
     coluna %in% "ZABALA HERMANOS" ~ "zabala hermanos",
-    coluna %in% "ZIGANA" ~ "zigana"
+    coluna %in% "ZIGANA" ~ "zigana",
+    coluna %in% c("semmarca", "null", "n/c", "nãoconsta", "s/marca", "nãoaparen", "ignorada", "nãopossui", "desconheci", "nc", "s/m", "naoaparen") ~ "Sem informação"
   )
 }'
 
@@ -377,17 +381,17 @@ tibble::tibble(
   tidyr::separate_wider_delim(
     cols = combinacao,
     delim = "~",
-    names = c("valor", "valor_formatado"),
-    cols_remove = FALSE
+    names = c("marca", "marca_formatada"),
+    cols_remove = TRUE
   ) |>
   tidyr::separate_longer_delim(
-    cols = valor,
+    cols = marca,
     delim = stringr::regex(',[ ]?\\"')
   ) |>
   dplyr::mutate(
-    valor = stringr::str_remove_all(valor, '\\"'),
-    valor = stringr::str_trim(valor),
-    valor_formatado = stringr::str_remove_all(valor_formatado, '\\"|,$'),
-    valor_formatado = stringr::str_trim(valor_formatado)
+    marca = stringr::str_remove_all(marca, '\\"'),
+    marca = stringr::str_trim(marca),
+    marca_formatada = stringr::str_remove_all(marca_formatada, '\\"|,$'),
+    marca_formatada = stringr::str_trim(marca_formatada)
   ) |>
   writexl::write_xlsx("inst/tabelas_depara/depara_marca.xlsx")

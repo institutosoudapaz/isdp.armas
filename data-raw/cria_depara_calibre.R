@@ -304,17 +304,17 @@ tibble::tibble(
   tidyr::separate_wider_delim(
     cols = combinacao,
     delim = "~",
-    names = c("valor", "valor_formatado"),
-    cols_remove = FALSE
+    names = c("calibre", "calibre_formatado"),
+    cols_remove = TRUE
   ) |> 
   tidyr::separate_longer_delim(
-    cols = valor,
+    cols = calibre,
     delim = stringr::regex(',[ ]?\\"')
   ) |> 
   dplyr::mutate(
-    valor = stringr::str_remove_all(valor, '\\"'),
-    valor = stringr::str_trim(valor),
-    valor_formatado = stringr::str_remove_all(valor_formatado, '\\"|,$'),
-    valor_formatado = stringr::str_trim(valor_formatado)
+    calibre = stringr::str_remove_all(calibre, '\\"'),
+    calibre = stringr::str_trim(calibre),
+    calibre_formatado = stringr::str_remove_all(calibre_formatado, '\\"|,$'),
+    calibre_formatado = stringr::str_trim(calibre_formatado)
   ) |> 
   writexl::write_xlsx("inst/tabelas_depara/depara_calibre.xlsx")
