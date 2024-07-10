@@ -61,12 +61,14 @@ dados_armas_sp <- dados_sp |>
     arma_numero_serie = toupper(arma_numero_serie)
   )
 
+# Pegando ano de produção segundo o número de série de armas Taurus
+
 tab_regra_1 <- dados_armas_sp |> 
   dplyr::filter(
     !is.na(arma_numero_serie),
     !stringr::str_detect(arma_numero_serie, "[a-z]"),
     arma_marca == "taurus",
-    arma_tipo == "revolver"
+    arma_tipo == "Revolver"
   ) |> 
   aplicar_regra_1() |> 
   dplyr::select(
@@ -81,7 +83,7 @@ tab_regra_2_1 <- dados_armas_sp |>
     nchar(arma_numero_serie) == 8,
     stringr::str_detect(arma_numero_serie, "^[A-Z]{3}"),
     arma_marca == "taurus",
-    arma_marca == "revolver"
+    arma_tipo == "Pistola" # confirmar
   ) |> 
   dplyr::mutate(
     arma_ns_primeira_letra = stringr::str_sub(arma_numero_serie, 1, 1),
@@ -99,7 +101,8 @@ tab_regra_2_2 <- dados_armas_sp |>
     !is.na(arma_numero_serie),
     nchar(arma_numero_serie) %in% c(7, 8),
     stringr::str_detect(arma_numero_serie, "^[A-Z]{2}"),
-    arma_marca == "taurus"
+    arma_marca == "taurus",
+    arma_tipo == "Revolver"
   ) |> 
   dplyr::mutate(
     arma_ns_primeira_letra = stringr::str_sub(arma_numero_serie, 1, 1),
@@ -137,6 +140,8 @@ tab_taurus <- dplyr::bind_rows(
   tab_regra_2_2,
   tab_regra_3
 )
+
+# Gerando arquivo
 
 dados_armas_sp |>
   dplyr::left_join(
