@@ -2,7 +2,7 @@ dados_sp <- readr::read_rds("inst/dados_sp/dados_sp.rds")
 
 dados_armas_sp <- dados_sp |>
   dplyr::mutate(
-    id_arma = vctrs::vec_group_id(paste0(id_bo, cont_arma)),
+    id_arma = vctrs::vec_group_id(paste0(id_bo, "_", cont_arma)),
     flag_propriedade_policial = "",
     flag_arma_artesanal = "",
     arma_pais_origem = "",
@@ -60,13 +60,7 @@ dados_armas_sp <- dados_sp |>
   dplyr::mutate(
     arma_numero_serie = toupper(arma_numero_serie)
   ) |>
-  dplyr::arrange(id_bo, id_arma) |>
-  dplyr::group_by(id_arma) |>
-  tidyr::fill(
-    arma_numero_serie,
-    .direction = "downup"
-  ) |> 
-  dplyr::ungroup()
+  dplyr::arrange(id_bo, id_arma) 
 
 # Pegando ano de produção segundo o número de série de armas Taurus
 
@@ -155,4 +149,4 @@ dados_armas_sp |>
   #   tab_taurus,
   #   by = c("id_bo", "id_arma")
   # ) |>
-  readr::write_rds("inst/dados_sp/dados_armas_sp.rds")
+  readr::write_rds("inst/dados_sp/dados_armas_sp.rds", compress = "xz")
