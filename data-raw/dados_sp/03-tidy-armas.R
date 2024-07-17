@@ -66,7 +66,7 @@ dados_armas_sp <- dados_sp |>
 tab_regra_1 <- dados_armas_sp |> 
   dplyr::filter(
     !is.na(arma_numero_serie),
-    !stringr::str_detect(arma_numero_serie, "[a-z]"),
+    !stringr::str_detect(arma_numero_serie, "[A-Z]"),
     arma_marca == "taurus",
     arma_tipo == "Revolver"
   ) |> 
@@ -86,8 +86,8 @@ tab_regra_2_1 <- dados_armas_sp |>
     arma_tipo == "Pistola" # confirmar
   ) |> 
   dplyr::mutate(
-    arma_ns_primeira_letra = stringr::str_sub(arma_numero_serie, 1, 1),
-    arma_ns_segunda_letra = stringr::str_sub(arma_numero_serie, 2, 2)
+    arma_ns_primeira_letra = stringr::str_sub(arma_numero_serie, 2, 2),
+    arma_ns_segunda_letra = stringr::str_sub(arma_numero_serie, 3, 3)
   ) |> 
   aplicar_regra_2() |> 
   dplyr::select(
