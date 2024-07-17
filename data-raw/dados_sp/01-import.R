@@ -155,7 +155,7 @@ dados_sp_2022_2023_pre_recurso <- readxl::read_excel(
     numero_logradouro = as.character(numero_logradouro),
     dplyr::across(
       c(latitude, longitude),
-      \(x) ifelse(x  == 0, NA_real_, x)
+      \(x) ifelse(x == 0, NA_real_, x)
     ),
     naturalidade_pessoa = as.character(naturalidade_pessoa)
   )
@@ -168,15 +168,19 @@ dados_sp_2022_2023 <- dados_sp_2022_2023_pre_recurso |>
 
 # Juntando bases -------------------------------------------------------------
 
-dplyr::bind_rows(
+dados_sp <- dplyr::bind_rows(
   dados_sp_2018_1,
   dados_sp_2018_2,
   dados_sp_2019_2022,
   dados_sp_2022_2023
 ) |>
   dplyr::distinct() |>
+  dplyr::arrange(ano_bo, id_delegacia, num_bo) |> 
   dplyr::mutate(
-    id_bo = "",
+    id_bo = vctrs::vec_group_id(paste0(id_delegacia, num_bo, ano_bo)),
+    .before = 1
+  ) |> 
+  dplyr::mutate(
     cod_ibge = "",
     cod_ibge_circ = "",
     ano_bo_novo = lubridate::year(data_ocorrencia_bo),
@@ -197,8 +201,11 @@ dplyr::bind_rows(
       hora_ocorrencia_bo <= "17:59" ~ "Tarde",
       TRUE ~ "Noite"
     )
-  ) |>
-  readr::write_rds("inst/dados_sp/dados_sp.rds", compress = "xz")
+  ) |> 
+  dplyr::arrange(id_bo)
+  
+
+readr::write_rds(dados_sp, "inst/dados_sp/dados_sp.rds", compress = "xz")
 
 
 # DOCUMENTAÇÃO
