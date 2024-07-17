@@ -177,7 +177,7 @@ dados_sp <- dplyr::bind_rows(
   dplyr::distinct() |>
   dplyr::arrange(ano_bo, id_delegacia, num_bo) |> 
   dplyr::mutate(
-    id_bo = vctrs::vec_group_id(paste0(id_delegacia, num_bo, ano_bo)),
+    id_bo = vctrs::vec_group_id(paste(id_delegacia, num_bo, ano_bo)),
     .before = 1
   ) |> 
   dplyr::mutate(
