@@ -2,13 +2,13 @@
 # "RJ 24648_APREENS_ARMA_FOGO_2019_BASE_APREENSAO.xlsx" com a tabela de armas
 # gerada
 
-dados_armas <- readr::read_rds("data-raw/dados_armas_rj.rds")
-dados_ocorrencias <- readr::read_rds("data-raw/dados_ocorrencias_rj.rds")
+dados_armas <- readr::read_rds("inst/dados_rj/dados_armas_rj.rds")
+dados_ocorrencias <- readr::read_rds("inst/dados_rj/dados_ocorrencias_rj.rds")
 dplyr::glimpse(dados_armas)
 dplyr::glimpse(dados_ocorrencias)
 
 dados_armas_complementar <- readxl::read_excel(
-  "data-raw/dados_rj/RJ 24648_APREENS_ARMA_FOGO_2019_BASE_APREENSAO.xlsx",
+  "data-raw/dados_rj/raw/RJ 24648_APREENS_ARMA_FOGO_2019_BASE_APREENSAO.xlsx",
   guess_max = 5000
 ) |>
   janitor::clean_names() |>

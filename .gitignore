@@ -4,6 +4,7 @@
 .httr-oauth
 .DS_Store
 .quarto
-data-raw/SP pos recurso 23042024SIC 55366246800 - Recurso_xlsx.xlsx
-data-raw/SIC 40606205187 1º Semestre 2018 Metodologia.xlsx
-data-raw/SP pos recurso 23042024SIC 55366246800 - Recurso.xlsb
+data-raw/dados_sp/raw/SIC 40606205187 1º Semestre 2018 Metodologia.xlsx
+data-raw/dados_sp/raw/SIC 40606205187 2º semestre 2018.xlsx
+data-raw/dados_sp/raw/SP pos recurso 23042024SIC 55366246800 - Recurso.xlsx
+data-raw/dados_sp/raw/SP pre recurso armas apreendidas estadual SIC 55366246800_12042024_armas SP.xlsx

@@ -1,4 +1,7 @@
-library(tidyverse)
+# Esse script pega um código legado enviado pelo ISDP e transforma as regras
+# em uma planilha Excel de-para de marca.
+# Provavelmente nunca mais precisará ser rodado, pois futuras modificações
+# no depara de marca poderão ser feitas diretamente na planilha gerada.
 
 texto <- 'reclassifica_marca <- function(coluna) {
   dplyr::case_when(
@@ -360,52 +363,37 @@ texto <- 'reclassifica_marca <- function(coluna) {
     ) ~ "victor sarasqueta",
     coluna %in% "ZABALA HERMANOS" ~ "zabala hermanos",
     coluna %in% "ZIGANA" ~ "zigana",
-    TRUE ~ coluna
+    coluna %in% c("semmarca", "null", "n/c", "nãoconsta", "s/marca", "nãoaparen", "ignorada", "nãopossui", "desconheci", "nc", "s/m", "naoaparen") ~ "Sem informação"
   )
 }'
 
-valores <- texto |>
-  stringr::str_replace_all("\n","") |>
-  stringr::str_replace_all("[:space:]+","") |>
-  stringr::str_extract_all("%in%c(.+)") |>
+combinacoes <- texto |>
+  stringr::str_replace_all("\n", "") |>
+  stringr::str_extract_all("%in% c(.+)") |>
   stringr::str_remove_all("coluna") |>
-  stringr::str_split("%in%")
+  stringr::str_split("%in%") |>
+  purrr::pluck(1) |>
+  stringr::str_squish() |>
+  stringr::str_remove_all("^c\\(|\\(|\\)|\\{|\\}")
 
-remake <- tibble(
-  coluna = valores[[1]]
+tibble::tibble(
+  combinacao = combinacoes
 ) |>
-  separate(coluna, into = c("chaves", "classes"), sep = "~") |>
-  mutate(
-    chaves = purrr::map(chaves, function(x){
-      x |>
-        stringr::str_extract_all('"[a-zA-Z]+"', simplify = TRUE) |>
-        stringr::str_remove_all('"')
-      }),
-    classes = classes |>
-      stringr::str_remove_all('"|,')
+  dplyr::filter(stringr::str_detect(combinacao, "~")) |>
+  tidyr::separate_wider_delim(
+    cols = combinacao,
+    delim = "~",
+    names = c("marca", "marca_formatada"),
+    cols_remove = TRUE
   ) |>
-  unnest(chaves) |>
-  mutate(
-    classes = ifelse(
-      classes == "ziganaTRUE", "zigana", classes
-    )
+  tidyr::separate_longer_delim(
+    cols = marca,
+    delim = stringr::regex(',[ ]?\\"')
   ) |>
-  rename(
-    MARCA_ARMA = chaves,
-    MARCA_ARMA_V2 = classes
-  )
-
-regex_marcas <- remake |>
-  mutate(
-    MARCA_ARMA = tolower(MARCA_ARMA)
+  dplyr::mutate(
+    marca = stringr::str_remove_all(marca, '\\"'),
+    marca = stringr::str_trim(marca),
+    marca_formatada = stringr::str_remove_all(marca_formatada, '\\"|,$'),
+    marca_formatada = stringr::str_trim(marca_formatada)
   ) |>
-  group_by(MARCA_ARMA_V2) |>
-  summarise(
-    regex = regex(paste0(unique(MARCA_ARMA), collapse = "|"), ignore_case = TRUE)
-  ) |>
-  arrange(
-    MARCA_ARMA_V2
-  )
-
-usethis::use_data(regex_marcas, overwrite = TRUE)
-writexl::write_xlsx(regex_marcas, "data-raw/tabelas_regex/regex_marcas.xlsx")
+  writexl::write_xlsx("inst/tabelas_depara/depara_marca.xlsx")
