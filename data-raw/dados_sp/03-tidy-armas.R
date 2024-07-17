@@ -2,13 +2,14 @@ dados_sp <- readr::read_rds("inst/dados_sp/dados_sp.rds")
 
 dados_armas_sp <- dados_sp |>
   dplyr::mutate(
-    id_arma = "",
+    id_arma = vctrs::vec_group_id(paste0(id_bo, cont_arma)),
     flag_propriedade_policial = "",
     flag_arma_artesanal = "",
     arma_pais_origem = "",
   ) |>
   dplyr::select(
     id_bo,
+    id_arma,
     id_delegacia,
     nome_departamento,
     nome_seccional,
@@ -45,7 +46,6 @@ dados_armas_sp <- dados_sp |>
     descr_tipo_pessoa,
     flag_vitima_fatal,
     flag_vitima_violencia_domestica,
-    id_arma,
     cont_arma,
     arma_calibre = calibre_arma,
     arma_numero_serie = numero_arma,
@@ -56,78 +56,85 @@ dados_armas_sp <- dados_sp |>
     arma_proprietario_nome = nome_proprietario,
     flag_propriedade_policial,
     flag_arma_artesanal
-  ) |> 
+  ) |>
   dplyr::mutate(
     arma_numero_serie = toupper(arma_numero_serie)
-  )
+  ) |>
+  dplyr::arrange(id_bo, id_arma) |>
+  dplyr::group_by(id_arma) |>
+  tidyr::fill(
+    arma_numero_serie,
+    .direction = "downup"
+  ) |> 
+  dplyr::ungroup()
 
 # Pegando ano de produção segundo o número de série de armas Taurus
 
-tab_regra_1 <- dados_armas_sp |> 
+tab_regra_1 <- dados_armas_sp |>
   dplyr::filter(
     !is.na(arma_numero_serie),
     !stringr::str_detect(arma_numero_serie, "[A-Z]"),
     arma_marca == "taurus",
     arma_tipo == "Revolver"
-  ) |> 
-  aplicar_regra_1() |> 
+  ) |>
+  aplicar_regra_1() |>
   dplyr::select(
     id_bo,
     id_arma,
     arma_ano_fabricacao
   )
 
-tab_regra_2_1 <- dados_armas_sp |> 
+tab_regra_2_1 <- dados_armas_sp |>
   dplyr::filter(
     !is.na(arma_numero_serie),
     nchar(arma_numero_serie) == 8,
     stringr::str_detect(arma_numero_serie, "^[A-Z]{3}"),
     arma_marca == "taurus",
     arma_tipo == "Pistola" # confirmar
-  ) |> 
+  ) |>
   dplyr::mutate(
     arma_ns_primeira_letra = stringr::str_sub(arma_numero_serie, 2, 2),
     arma_ns_segunda_letra = stringr::str_sub(arma_numero_serie, 3, 3)
-  ) |> 
-  aplicar_regra_2() |> 
+  ) |>
+  aplicar_regra_2() |>
   dplyr::select(
     id_bo,
     id_arma,
     arma_ano_fabricacao
   )
 
-tab_regra_2_2 <- dados_armas_sp |> 
+tab_regra_2_2 <- dados_armas_sp |>
   dplyr::filter(
     !is.na(arma_numero_serie),
     nchar(arma_numero_serie) %in% c(7, 8),
     stringr::str_detect(arma_numero_serie, "^[A-Z]{2}"),
     arma_marca == "taurus",
     arma_tipo == "Revolver"
-  ) |> 
+  ) |>
   dplyr::mutate(
     arma_ns_primeira_letra = stringr::str_sub(arma_numero_serie, 1, 1),
     arma_ns_segunda_letra = stringr::str_sub(arma_numero_serie, 2, 2)
-  ) |> 
-  aplicar_regra_2() |> 
+  ) |>
+  aplicar_regra_2() |>
   dplyr::select(
     id_bo,
     id_arma,
     arma_ano_fabricacao
   )
 
-tab_regra_3 <- dados_armas_sp |> 
+tab_regra_3 <- dados_armas_sp |>
   dplyr::filter(
     !is.na(arma_numero_serie),
     nchar(arma_numero_serie) == 9,
     stringr::str_detect(arma_numero_serie, "^[A-Z]{3}"),
     arma_marca == "taurus"
-  ) |> 
+  ) |>
   dplyr::mutate(
     arma_ns_primeira_letra = stringr::str_sub(arma_numero_serie, 1, 1),
     arma_ns_segunda_letra = stringr::str_sub(arma_numero_serie, 2, 2),
     arma_ns_terceira_letra = stringr::str_sub(arma_numero_serie, 2, 2)
-  ) |> 
-  aplicar_regra_3() |> 
+  ) |>
+  aplicar_regra_3() |>
   dplyr::select(
     id_bo,
     id_arma,
@@ -144,8 +151,8 @@ tab_taurus <- dplyr::bind_rows(
 # Gerando arquivo
 
 dados_armas_sp |>
-  dplyr::left_join(
-    tab_taurus,
-    by = c("id_bo", "id_arma")
-  ) |> 
+  # dplyr::left_join(
+  #   tab_taurus,
+  #   by = c("id_bo", "id_arma")
+  # ) |>
   readr::write_rds("inst/dados_sp/dados_armas_sp.rds")
