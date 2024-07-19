@@ -1,3 +1,23 @@
+depara_tipo <- function(tab, nome_coluna = "arma_tipo"){
+
+  tab_depara_tipo <- readxl::read_excel(
+    system.file("tabelas_depara/depara_tipo.xlsx", package = "isdp.armas")
+  )
+
+  if (nome_coluna != "tipo") {
+    tab_depara_tipo <- tab_depara_tipo |>
+      dplyr::rename_with(
+        \(x) ifelse(x == "tipo", nome_coluna, x)
+      )
+  }
+
+  tab |>
+    dplyr::left_join(
+      tab_depara_tipo,
+      by = nome_coluna
+    )
+}
+
 depara_calibre <- function(tab, nome_coluna = "calibre") {
   tab_depara_calibre <- readxl::read_excel(
     system.file("tabelas_depara/depara_calibre.xlsx", package = "isdp.armas")

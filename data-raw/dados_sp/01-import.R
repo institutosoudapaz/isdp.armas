@@ -99,11 +99,11 @@ dados_sp_2018_2 <- readxl::read_excel(
   )
 
 dados_sp_2019_2022 <- readxl::read_excel(
-  "data-raw/dados_sp/raw/SP pre recurso armas apreendidas estadual SIC 55366246800_12042024_armas SP.xlsx",
+  "data-raw/dados_sp/raw/SP pos recurso 23042024SIC 55366246800 - Recurso.xlsx",
   sheet = "Base de Dados (1)",
   guess_max = 400000,
   na = c("", "NULL"),
-  col_types = c(rep("guess", 13), "date", rep("guess", 44)) # pegar hora como date
+  col_types = c(rep("guess", 13), "guess", rep("guess", 46)) # pegar hora como date
 ) |>
   janitor::clean_names() |>
   janitor::remove_empty(c("rows", "cols")) |>
@@ -115,6 +115,9 @@ dados_sp_2019_2022 <- readxl::read_excel(
     ),
     num_bo = as.character(num_bo),
     hora_ocorrencia_bo = as.character(hora_ocorrencia_bo),
+    data_ocorrencia_bo = as.POSIXct(data_ocorrencia_bo, tz = "UTC"),
+    data_comunicacao_bo = as.POSIXct(data_comunicacao_bo, tz = "UTC"),
+    datahora_registro_bo = as.POSIXct(datahora_registro_bo, tz = "UTC"),
     numero_logradouro = as.character(numero_logradouro),
   )
 
@@ -137,7 +140,7 @@ dados_sp_2022_2023_pos_recurso <- readxl::read_excel(
   dplyr::distinct(id_delegacia, num_bo, ano_bo, cont_arma, numero_arma)
 
 dados_sp_2022_2023_pre_recurso <- readxl::read_excel(
-  "data-raw/dados_sp/raw/SP pre recurso armas apreendidas estadual SIC 55366246800_12042024_armas SP.xlsx",
+  "data-raw/dados_sp/raw/SP armas apreendidas estadual SIC 55366246800_12042024_armas SP.xlsx",
   sheet = "Base de Dados (2)",
   na = c("", "NULL"),
   guess_max = 40000
@@ -175,11 +178,11 @@ dados_sp <- dplyr::bind_rows(
   dados_sp_2022_2023
 ) |>
   dplyr::distinct() |>
-  dplyr::arrange(ano_bo, id_delegacia, num_bo) |> 
+  dplyr::arrange(ano_bo, id_delegacia, num_bo) |>
   dplyr::mutate(
     id_bo = vctrs::vec_group_id(paste(id_delegacia, num_bo, ano_bo)),
     .before = 1
-  ) |> 
+  ) |>
   dplyr::mutate(
     cod_ibge = "",
     cod_ibge_circ = "",
@@ -201,9 +204,9 @@ dados_sp <- dplyr::bind_rows(
       hora_ocorrencia_bo <= "17:59" ~ "Tarde",
       TRUE ~ "Noite"
     )
-  ) |> 
+  ) |>
   dplyr::arrange(id_bo)
-  
+
 
 readr::write_rds(dados_sp, "inst/dados_sp/dados_sp.rds", compress = "xz")
 

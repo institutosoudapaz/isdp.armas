@@ -1,5 +1,7 @@
 dados_sp <- readr::read_rds("inst/dados_sp/dados_sp.rds")
 
+devtools::load_all()
+
 dados_armas_sp <- dados_sp |>
   dplyr::mutate(
     id_arma = vctrs::vec_group_id(paste0(id_bo, "_", cont_arma)),
@@ -60,7 +62,13 @@ dados_armas_sp <- dados_sp |>
   dplyr::mutate(
     arma_numero_serie = toupper(arma_numero_serie)
   ) |>
-  dplyr::arrange(id_bo, id_arma) 
+  dplyr::arrange(id_bo, id_arma) |>
+  dplyr::distinct(
+    id_bo, id_arma, cont_arma, arma_calibre,
+    arma_numero_serie, arma_marca, arma_pais_origem,
+    arma_tipo, arma_estado, arma_proprietario_nome,
+    flag_propriedade_policial, flag_arma_artesanal
+  )
 
 # Pegando ano de produção segundo o número de série de armas Taurus
 
@@ -137,16 +145,26 @@ tab_regra_3 <- dados_armas_sp |>
 
 tab_taurus <- dplyr::bind_rows(
   tab_regra_1,
-  tab_regra_2_1,
-  tab_regra_2_2,
-  tab_regra_3
+  tab_regra_2_1 |> dplyr::mutate(arma_ano_fabricacao = as.character(arma_ano_fabricacao)),
+  tab_regra_2_2 |> dplyr::mutate(arma_ano_fabricacao = as.character(arma_ano_fabricacao)),
+  tab_regra_3 |> dplyr::mutate(arma_ano_fabricacao = as.character(arma_ano_fabricacao))
 )
 
 # Gerando arquivo
 
-dados_armas_sp |>
-  # dplyr::left_join(
-  #   tab_taurus,
-  #   by = c("id_bo", "id_arma")
-  # ) |>
-  readr::write_rds("inst/dados_sp/dados_armas_sp.rds", compress = "xz")
+calibre_bruno <- readxl::read_excel(sheet = 2, "data-raw/dados_sp/raw/Planilhas correções armas de fogo .xlsx")
+
+armas_final <- dados_armas_sp |>
+  dplyr::left_join(
+    tab_taurus |> dplyr::distinct(id_bo, id_arma, .keep_all = TRUE),
+    by = c("id_bo", "id_arma")
+  ) |>
+  depara_calibre("arma_calibre") |>
+  depara_marca("arma_marca") |>
+  depara_tipo("arma_tipo") |>
+  dplyr::mutate(
+    calibre_formatado_final = dplyr::coalesce(calibre_formatado_si, calibre_formatado_original),
+
+  )
+
+readr::write_rds("inst/dados_sp/dados_armas_sp.rds", compress = "xz")

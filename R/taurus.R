@@ -18,7 +18,7 @@ aplicar_regra_1 <- function(tab, calibre) {
 }
 
 
-aplicar_regra_2 <- function() {
+aplicar_regra_2 <- function(tab) {
   depara_regra_2 <- readxl::read_excel(
     system.file(
       "tabelas_depara/taurus_regra_2.xlsx",
@@ -36,7 +36,7 @@ aplicar_regra_2 <- function() {
     )
 }
 
-aplicar_regra_3 <- function() {
+aplicar_regra_3 <- function(tab) {
   depara_regra_3 <- readxl::read_excel(
     system.file(
       "tabelas_depara/taurus_regra_3.xlsx",
