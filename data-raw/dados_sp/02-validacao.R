@@ -16,3 +16,18 @@ dados_sp |>
   ) |> 
   dplyr::count(numero_arma, flag_arma_fogo, sort = TRUE) |> 
   writexl::write_xlsx("data-raw/dados_sp/docs/validacao_numero_serie.xlsx")
+
+
+# Endereços diferentes
+dados_sp |> 
+  dplyr::group_by(id_bo) |> 
+  dplyr::summarise(
+    n = dplyr::n_distinct(logradouro)
+  ) |> 
+  dplyr::arrange(desc(n)) |> 
+  dplyr::filter(n > 1)
+
+
+# dados_sp |> 
+#   dplyr::group_by(id_bo) |> 
+#   dplyr::select(dplyr::where(~ length(unique(.x)) > 1))
