@@ -47,7 +47,9 @@ dados_vitimas_sp <- dados_sp |>
     descr_estado_civil,
     flag_vitima_violencia_domestica,
     cont_arma
-  )
+  ) |> 
+  dplyr::distinct()
 
 dados_vitimas_sp |>
   readr::write_rds("inst/dados_sp/dados_vitimas_sp.rds", compress = "xz")
+
