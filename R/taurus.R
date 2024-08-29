@@ -5,13 +5,23 @@ aplicar_regra_1 <- function(tab, calibre) {
       package = "isdp.armas"
     ),
     col_types = "text"
-  )
+  ) |>
+    dplyr::rename(
+      arma_calibre_join = arma_calibre
+    )
 
   tab |>
+    dplyr::mutate(
+      arma_numero_serie = as.numeric(arma_numero_serie)
+    ) |>
     dplyr::left_join(
-      depara_regra_1,
+      depara_regra_1 |>
+        dplyr::mutate(
+          num_serie_min = as.numeric(num_serie_min),
+          num_serie_max = as.numeric(num_serie_max)
+        ),
       by = dplyr::join_by(
-        "arma_calibre",
+        "arma_calibre_join",
         dplyr::between("arma_numero_serie", "num_serie_min", "num_serie_max")
       )
     )

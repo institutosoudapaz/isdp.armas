@@ -2,7 +2,9 @@ depara_tipo <- function(tab, nome_coluna = "arma_tipo"){
 
   tab_depara_tipo <- readxl::read_excel(
     system.file("tabelas_depara/depara_tipo.xlsx", package = "isdp.armas")
-  )
+  ) |>
+    dplyr::distinct(tipo, .keep_all = TRUE)
+
 
   if (nome_coluna != "tipo") {
     tab_depara_tipo <- tab_depara_tipo |>
@@ -21,7 +23,8 @@ depara_tipo <- function(tab, nome_coluna = "arma_tipo"){
 depara_calibre <- function(tab, nome_coluna = "calibre") {
   tab_depara_calibre <- readxl::read_excel(
     system.file("tabelas_depara/depara_calibre.xlsx", package = "isdp.armas")
-  )
+  ) |>
+    dplyr::distinct(calibre, .keep_all = TRUE)
 
   if (nome_coluna != "calibre") {
     tab_depara_calibre <- tab_depara_calibre |>
