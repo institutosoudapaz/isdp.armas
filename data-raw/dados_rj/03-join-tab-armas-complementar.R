@@ -16,7 +16,7 @@ dados_armas_complementar <- readxl::read_excel(
 
 dplyr::glimpse(dados_armas_complementar)
 
-# Por controle
+# Por controle ❌
 dados_armas_complementar |>
   dplyr::count(numero_de_serie, sort = TRUE)
 
@@ -26,13 +26,14 @@ controle <- dados_armas |>
 
 sum(controle %in% dados_armas_complementar$controle_interno_sco)
 
-# Por dados da ocorrência
+# Por dados da ocorrência ❌
 dados_armas |>
   dplyr::left_join(
     dados_ocorrencias |>
       dplyr::mutate(
+        data_com = as.character(data_com),
         data_com = paste(data_com, hora_com)
-      ) |> 
+      ) |>
       dplyr::distinct(controle, data_com),
     by = "controle"
   ) |>
@@ -54,8 +55,32 @@ dados_armas |>
         data_com = as.character(data_com)
       ),
     by = c("tipo", "calibre", "marca", "data_com")
-  ) |> 
+  ) |>
   dplyr::filter(!is.na(numero_de_serie))
 
-dados_armas_complementar |> 
-dplyr::filter(!is.na(numero_de_serie))
+# Por controle e número de procedimento ❌
+
+controle <- dados_armas |>
+  dplyr::mutate(controle = stringr::str_remove(controle, "-")) |>
+  dplyr::pull(controle)
+
+numero_procedimento <- dados_armas_complementar |>
+  dplyr::mutate(
+    numero_procedimento = stringr::str_remove_all(numero_procedimento, "-|/")
+  ) |>
+  dplyr::pull(numero_procedimento)
+
+sum(numero_procedimento %in% controle)
+
+
+# Rascunho
+
+sum(dados_armas$controle %in% dados_ocorrencias$controle)
+dados_ocorrencias$data_com |> min()
+dados_ocorrencias$data_com |> max()
+
+length(unique(dados_armas$controle)) -
+  sum(unique(dados_armas$controle) %in% dados_ocorrencias$controle)
+
+
+dados_armas |> dplyr::count(controle, sort = TRUE)
