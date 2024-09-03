@@ -13,3 +13,4 @@ inst/dados_sp/dados_sp.rds
 inst/dados_sp/dados_armas_sp.rds
 inst/dados_sp/dados_ocorrencias_sp.rds
 inst/dados_sp/dados_vitimas_sp.rds
+.vscode/settings.json
