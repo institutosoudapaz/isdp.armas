@@ -4,8 +4,6 @@ library(tidyverse)
 
 devtools::load_all()
 
-calibre_bruno <- readxl::read_excel(sheet = 2, "data-raw/dados_sp/raw/Planilhas correções armas de fogo .xlsx")
-
 dados_armas_sp <- dados_sp |>
   dplyr::mutate(
     id_arma = vctrs::vec_group_id(paste0(id_bo, "_", cont_arma)),

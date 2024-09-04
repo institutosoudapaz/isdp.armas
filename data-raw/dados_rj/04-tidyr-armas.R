@@ -2,8 +2,6 @@ devtools::load_all()
 
 dados_armas <- readr::read_rds("inst/dados_rj/dados_armas_rj.rds")
 
-calibre_bruno <- readxl::read_excel(sheet = 2, "data-raw/dados_sp/raw/Planilhas correções armas de fogo .xlsx")
-
 dados_armas_formatado <- dados_armas |>
   dplyr::mutate(
     id_arma = "",
@@ -26,7 +24,7 @@ dados_armas_formatado <- dados_armas |>
     )
   ) |>
   depara_calibre("arma_calibre") |>
-  # depara_marca("arma_marca") |>
+  depara_marca("arma_marca") |>
   depara_tipo("arma_tipo")
 
 dados_armas_formatado |>

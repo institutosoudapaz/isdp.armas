@@ -396,4 +396,4 @@ tibble::tibble(
     marca_formatada = stringr::str_remove_all(marca_formatada, '\\"|,$'),
     marca_formatada = stringr::str_trim(marca_formatada)
   ) |>
-  writexl::write_xlsx("inst/tabelas_depara/depara_marca.xlsx")
+  writexl::write_xlsx("data-raw/tabelas_depara/depara_marca_legado.xlsx")
