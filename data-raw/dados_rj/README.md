@@ -9,3 +9,15 @@
 - `/raw`: arquivos originais enviados pelo ISPD.
 
 - `dic`: dicionário de dados enviados pelo ISDP.
+
+
+
+## Dúvidas
+
+- A base de armas possuei 2423 linhas duplicadas. O que fazer com elas?
+
+- Existem 6752 números de controle (de um total de 33978) na base de armas que não possuem correspondência na base de ocorrências. A gente vai precisar juntar essas bases?
+
+- O que seria o id da arma na base do Rio?
+
+- Usar as colunas quantidade e origem da base de armas?
