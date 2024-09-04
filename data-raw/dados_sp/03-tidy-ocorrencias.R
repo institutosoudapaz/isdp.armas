@@ -44,5 +44,199 @@ dados_ocorrencias_sp <- dados_sp |>
     cont_arma
   )
 
-dados_ocorrencias_sp |>
+tabela_ref = munifacil::depara_muni_codigo() |>
+  dplyr::bind_rows(
+    tibble::tibble(
+      muni_join = c("sjose da bela vista", "ribeirao indios"),
+      uf_join = "SP",
+      id_municipio = c('3549508', '3543238'),
+      manual = TRUE,
+      existia_1991 = c(TRUE, FALSE),
+      existia_2000 = TRUE,
+      existia_2010 = TRUE
+    )
+  )
+
+locations <- data <- data.frame(
+  DE = c(
+    "Via pública",
+    "Residência",
+    "Unidade rural",
+    "Condominio Residencial",
+    "Comércio e Serviços",
+    "Condomínio Residencial",
+    "Restaurante e Afins",
+    "Centro Comerc./Empresarial",
+    "Rodovia/Estrada",
+    "Favela",
+    "(blank)",
+    "Area não Ocupada",
+    "Serviços e Bens Públicos",
+    "Shopping Center",
+    "Estabelecimento de ensino",
+    "Repartição Pública",
+    "Condominio Comercial",
+    "Saúde",
+    "Condomínio Comercial",
+    "Local clandestino/ilegal",
+    "Terminal/Estação",
+    "Hospedagem",
+    "Centro Comercial/Empresarial",
+    "Estabelecimento Industrial",
+    "Escritório",
+    "Lazer e Recreação",
+    "Estabelecimento prisional",
+    "Estabelecimento Bancário",
+    "NULL",
+    "Estacionamento/Garagem",
+    "Veículo em movimento",
+    "Estrada de ferro",
+    "Entidade Assistencial",
+    "Templo e afins",
+    "Carro Forte",
+    "Garagem coletiva de prédio",
+    "Garagem ou abrigo de residência",
+    "Estacionamento particular",
+    "Estacionamento com vigilância",
+    "Estacionamento público"
+  ),
+  PARA = c(
+    "Via pública",
+    "Residência",
+    "Unidade rural",
+    "Residência",
+    "Comércio e Serviços",
+    "Residência",
+    "LAZER/HOSPEDAGEM",
+    "Comércio e Serviços",
+    "Rodovia/Ferrovia",
+    "Via pública",
+    "NA",
+    "Via pública",
+    "Repartição Pública",
+    "Comércio e Serviços",
+    "Estabelecimento de ensino",
+    "Repartição Pública",
+    "Comércio e Serviços",
+    "Repartição Pública",
+    "Comércio e Serviços",
+    "Via pública",
+    "Via pública",
+    "LAZER/HOSPEDAGEM",
+    "Comércio e Serviços",
+    "Comércio e Serviços",
+    "Comércio e Serviços",
+    "LAZER/HOSPEDAGEM",
+    "Repartição Pública",
+    "Instituição bancária / Carro forte",
+    "NA",
+    "Estacionamento",
+    "Veículo",
+    "Rodovia/Ferrovia",
+    "Comércio e Serviços",
+    "Comércio e Serviços",
+    "Instituição bancária / Carro forte",
+    "Estacionamento",
+    "Estacionamento",
+    "Estacionamento",
+    "Estacionamento",
+    "Estacionamento"
+  )
+) |>
+  mutate(
+    DE = DE |>
+      stringr::str_to_lower() |>
+      abjutils::rm_accent()
+  ) |>
+  distinct(.keep_all = TRUE)
+
+depara_rubricas <- readxl::read_excel("data-raw/depara_rubricas.xlsx") |>
+  janitor::clean_names()
+
+dados_ocorrencias_sp_tidy <- dados_ocorrencias_sp |>
+  dplyr::mutate(
+    muni= coalesce(cidade, nome_municipio_circ),
+    uf = "SP"
+  ) |>
+  munifacil::limpar_colunas(muni, uf) |>
+  munifacil::incluir_codigo_ibge(
+    tabela_ref
+  ) |>
+  dplyr::mutate(
+    ano_bo_novo = lubridate::year(data_ocorrencia_bo),
+    mes_bo = lubridate::month(data_ocorrencia_bo),
+    periodo_ocorrencia = dplyr::case_when(
+      hora_ocorrencia_bo <= "04:00" ~ "Madrugada",
+      hora_ocorrencia_bo <= "08:00" ~ "Início Manhã",
+      hora_ocorrencia_bo <= "12:00" ~ "Manhã",
+      hora_ocorrencia_bo <= "16:00" ~ "Início Tarde",
+      hora_ocorrencia_bo <= "20:00" ~ "Tarde",
+      hora_ocorrencia_bo > "20:00" ~ "Noite",
+      TRUE ~ NA_character_
+    ),
+    DE = descr_tipolocal |>
+      stringr::str_to_lower() |>
+      abjutils::rm_accent()) |>
+  left_join(locations) |>
+  left_join(depara_rubricas) |>
+  mutate(
+    rubrica2 = case_when(
+      is.na(rubrica2) & str_detect(rubrica, "Homicídio") ~ "Homicídio",
+      TRUE ~ rubrica2
+    )
+  ) |>
+  distinct(id_bo, .keep_all = TRUE) |>
+  dplyr::select(
+    id_bo,
+    id_delegacia,
+    nome_departamento,
+    nome_seccional,
+    nome_delegacia,
+    cidade,
+    nome_municipio_circ,
+    id_municipio,
+    manual,
+    ano_bo,
+    num_bo,
+    nome_departamento_circ,
+    nome_seccional_circ,
+    nome_delegacia_circ,
+    nome_municipio_circ,
+    descr_tipo_bo,
+    data_ocorrencia_bo,
+    ano_bo_novo,
+    mes_bo,
+    hora_ocorrencia_bo,
+    periodo_ocorrencia,
+    descricao_apresentacao,
+    datahora_registro_bo,
+    data_comunicacao_bo,
+    autoria_bo,
+    flag_status,
+    rubrica,
+    descr_conduta,
+    desdobramento,
+    rubrica2,
+    desdobramento,
+    bairro,
+    descr_tipolocal,
+    descr_subtipolocal,
+    descr_tipolocal_formatado = PARA,
+    cep,
+    logradouro,
+    numero_logradouro,
+    latitude,
+    longitude,
+    flag_vitima_violencia_domestica
+  ) |>
+  left_join(
+    group_by(armas_final, id_bo) |> summarise(cont_arma = n())
+  )
+
+devtools::install_github("curso-r/munifacil")
+
+dados_ocorrencias_sp_tidy |>
+  writexl::write_xlsx("inst/dados_sp/20240902_dados_ocorrencias_sem_lat_lon.xlsx")
+
+dados_ocorrencias_sp_tidy |>
   readr::write_rds("inst/dados_sp/dados_ocorrencias_sp.rds", compress = "xz")

@@ -88,9 +88,9 @@ dados_armas_sp_consolidado <- dados_armas_sp |>
     )) |>
       stringr::str_squish(),
     arma_calibre_final = dplyr::case_when(
-      calibre_formatado_final %in% c(".32 ou 34 G") & tipo_formatado == "espingarda" ~ "32 gauge",
-      calibre_formatado_final %in% c(".32 ou 34 G") & tipo_formatado %in% c("revolver", "garrucha") ~ ".32 S&W long",
-      calibre_formatado_final %in% c(".32 ou 34 G") & tipo_formatado %in% c("pistola", "carabina", "submetralhadora") ~ ".32 acp",
+      calibre_formatado_final %in% c(".32 ou 34 G", ".32") & tipo_formatado == "espingarda" ~ "32 gauge",
+      calibre_formatado_final %in% c(".32 ou 34 G", ".32", ".32 S&W") & tipo_formatado %in% c("revolver", "garrucha") ~ ".32 S&W long",
+      calibre_formatado_final %in% c(".32 ou 34 G", ".32") & tipo_formatado %in% c("pistola", "carabina", "submetralhadora") ~ ".32 acp",
       stringr::str_detect(calibre_formatado_final, "32^") ~ ".32 S&W long",
       TRUE ~ calibre_formatado_final
     ),
@@ -241,6 +241,8 @@ armas_final <- dados_armas_sp_consolidado |>
   dplyr::select(
     id_bo, id_arma, cont_arma,
     arma_calibre_original = arma_calibre,
+    arma_calibre_formatado = calibre_formatado_final,
+    arma_calibre_final = arma_calibre_final,
     arma_numero_serie_original,
     arma_marca_original = arma_marca,
     arma_tipo_original = arma_tipo,
@@ -277,7 +279,11 @@ armas_final <- dados_armas_sp_consolidado |>
 
 # readr::write_rds(armas_final, "inst/dados_sp/dados_armas_sp.rds", compress = "xz")
 
-writexl::write_xlsx(armas_final, "inst/dados_sp/20240827_dados_armas_bruto.xlsx")
+writexl::write_xlsx(armas_final, "inst/dados_sp/20240902_dados_armas.xlsx")
+
+
+armas_final |>
+  View()
 
 armas_final |>
   summarise(
