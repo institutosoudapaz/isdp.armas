@@ -21,7 +21,7 @@ dados_armas_complementar |>
   dplyr::count(numero_de_serie, sort = TRUE)
 
 controle <- dados_armas |>
-  dplyr::mutate(controle = stringr::str_sub(controle, 1, 7)) |>
+  dplyr::mutate(controle = stringr::str_sub(controle, 2, 8)) |>
   dplyr::pull(controle)
 
 sum(controle %in% dados_armas_complementar$controle_interno_sco)
@@ -75,7 +75,7 @@ sum(numero_procedimento %in% controle)
 
 # Rascunho
 
-sum(dados_armas$controle %in% dados_ocorrencias$controle)
+sum(dados_armas$controle %in% dados_ocorrencias$controle) 
 dados_ocorrencias$data_com |> min()
 dados_ocorrencias$data_com |> max()
 
@@ -84,3 +84,12 @@ length(unique(dados_armas$controle)) -
 
 
 dados_armas |> dplyr::count(controle, sort = TRUE)
+
+dados_armas |> 
+  dplyr::filter(!controle %in% dados_ocorrencias$controle) |> 
+  dplyr::mutate(ano = stringr::str_sub(controle, -4, -1)) |> 
+  dplyr::count(ano)
+
+dados_ocorrencias |> 
+  dplyr::mutate(ano = stringr::str_sub(controle, -4, -1)) |> 
+  dplyr::count(ano)
