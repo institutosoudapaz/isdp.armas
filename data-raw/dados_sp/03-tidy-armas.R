@@ -89,7 +89,7 @@ dados_armas_sp_consolidado <- dados_armas_sp |>
       calibre_formatado_final %in% c(".32 ou 34 G", ".32") & tipo_formatado == "espingarda" ~ "32 gauge",
       calibre_formatado_final %in% c(".32 ou 34 G", ".32", ".32 S&W") & tipo_formatado %in% c("revolver", "garrucha") ~ ".32 S&W long",
       calibre_formatado_final %in% c(".32 ou 34 G", ".32") & tipo_formatado %in% c("pistola", "carabina", "submetralhadora") ~ ".32 acp",
-      stringr::str_detect(calibre_formatado_final, "32^") ~ ".32 S&W long",
+      stringr::str_detect(calibre_formatado_final, "32$") ~ ".32 S&W long",
       TRUE ~ calibre_formatado_final
     ),
     arma_marca_final = dplyr::case_when(
@@ -199,7 +199,7 @@ tab_regra_3 <- dados_armas_sp_consolidado |>
   dplyr::mutate(
     arma_ns_primeira_letra = stringr::str_sub(arma_numero_serie, 1, 1),
     arma_ns_segunda_letra = stringr::str_sub(arma_numero_serie, 2, 2),
-    arma_ns_terceira_letra = stringr::str_sub(arma_numero_serie, 2, 2)
+    arma_ns_terceira_letra = stringr::str_sub(arma_numero_serie, 3, 3)
   ) |>
   aplicar_regra_3() |>
   dplyr::select(
