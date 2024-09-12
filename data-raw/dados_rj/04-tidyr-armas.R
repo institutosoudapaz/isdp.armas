@@ -30,13 +30,11 @@ dados_armas_formatado <- dados_armas |>
 dados_armas_consolidado <- dados_armas_formatado |>
   dplyr::mutate(
     flag_tipo_arma_incompativel_calibre = dplyr::case_when(
-      is.na(tipo_formatado) ~ FALSE,
+      is.na(tipo_formatado) ~ NA,
       is.na(tipo_arma_calibre) ~ TRUE,
       stringr::str_detect(tipo_arma_calibre, tipo_formatado) ~ FALSE,
       TRUE ~ TRUE
     ),
-    # Quando tipo_formatado é NA e tipo_arma_calibre não, não deveria receber
-    # tipo_arma_calibre?
     arma_tipo_join = dplyr::case_when(
       tipo_formatado == "artesanal" ~ "artesanal",
       !flag_tipo_arma_incompativel_calibre ~ tipo_formatado,
@@ -52,8 +50,7 @@ dados_armas_consolidado <- dados_armas_formatado |>
         tipo_formatado %in% c("revolver", "garrucha") ~ ".32 S&W long",
       calibre_formatado_final == ".32 ou 34 G" &
         tipo_formatado %in% c("pistola", "carabina", "submetralhadora") ~ ".32 acp",
-      # Não deveria ser stringr::str_detect(calibre_formatado_final, "^32")?
-      stringr::str_detect(calibre_formatado_final, "32^") ~ ".32 S&W long",
+      stringr::str_detect(calibre_formatado_final, "32$") ~ ".32 S&W long",
       calibre_formatado_final == ".32 ou 34 G" ~ ".32",
       TRUE ~ calibre_formatado_final
     ),
