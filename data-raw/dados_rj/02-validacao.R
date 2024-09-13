@@ -145,3 +145,13 @@ dplyr::select(
   crime
 ) |> 
   writexl::write_xlsx("data-raw/dados_rj/validacao/crimes_rj.xlsx")
+
+
+# Lista de valores da coluna patrimoniada ------------------------------------
+
+dados_armas_complementar <- readr::read_rds("inst/dados_rj/dados_armas_complementar.rds")
+
+dados_armas_complementar |>
+  dplyr::count(patrimoniada, sort = TRUE) |> 
+  writexl::write_xlsx("data-raw/dados_rj/validacao/patrimoniada_rj.xlsx")
+  
