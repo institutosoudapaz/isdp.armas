@@ -143,19 +143,19 @@ locations <- data <- data.frame(
     "Estacionamento"
   )
 ) |>
-  mutate(
+  dplyr::mutate(
     DE = DE |>
       stringr::str_to_lower() |>
       abjutils::rm_accent()
   ) |>
-  distinct(.keep_all = TRUE)
+  dplyr::distinct(.keep_all = TRUE)
 
 depara_rubricas <- readxl::read_excel("data-raw/depara_rubricas.xlsx") |>
   janitor::clean_names()
 
 dados_ocorrencias_sp_tidy <- dados_ocorrencias_sp |>
   dplyr::mutate(
-    muni= coalesce(cidade, nome_municipio_circ),
+    muni= dplyr::coalesce(cidade, nome_municipio_circ),
     uf = "SP"
   ) |>
   munifacil::limpar_colunas(muni, uf) |>
@@ -177,15 +177,15 @@ dados_ocorrencias_sp_tidy <- dados_ocorrencias_sp |>
     DE = descr_tipolocal |>
       stringr::str_to_lower() |>
       abjutils::rm_accent()) |>
-  left_join(locations) |>
-  left_join(depara_rubricas) |>
-  mutate(
-    rubrica2 = case_when(
-      is.na(rubrica2) & str_detect(rubrica, "Homicídio") ~ "Homicídio",
+  dplyr::left_join(locations) |>
+  dplyr::left_join(depara_rubricas) |>
+  dplyr::mutate(
+    rubrica2 = dplyr::case_when(
+      is.na(rubrica2) & stringr::str_detect(rubrica, "Homicídio") ~ "Homicídio",
       TRUE ~ rubrica2
     )
   ) |>
-  distinct(id_bo, .keep_all = TRUE) |>
+  dplyr::distinct(id_bo, .keep_all = TRUE) |>
   dplyr::select(
     id_bo,
     id_delegacia,
@@ -229,14 +229,73 @@ dados_ocorrencias_sp_tidy <- dados_ocorrencias_sp |>
     longitude,
     flag_vitima_violencia_domestica
   ) |>
-  left_join(
-    group_by(armas_final, id_bo) |> summarise(cont_arma = n())
+  dplyr::left_join(
+    dplyr::group_by(armas_final, id_bo) |>
+      dplyr::summarise(cont_arma = n())
   )
+
+base_enderecos <- dados_ocorrencias_sp_tidy |>
+  dplyr::filter(is.na(latitude), (!is.na(logradouro) | !is.na(cep))) |>
+  dplyr::distinct(logradouro, numero_logradouro, cidade, cep)
+
+enderecos <- paste(resuminho$`Nome do Logradouro`, resuminho$Número)
+
+# enderecos_postalcode <- tidygeocoder::geo(
+#   country = rep("Brazil", nrow(base_enderecos)),
+#   postalcode = base_enderecos$cep,
+#   method = "osm")
+#
+# enderecos_logradouro <- tidygeocoder::geo(
+#   country = rep("Brazil", nrow(base_enderecos)),
+#   city = base_enderecos$cidade,
+#   state = rep("São Paulo", nrow(base_enderecos)),
+#   street = paste(base_enderecos$logradouro, base_enderecos$numero_logradouro),
+#   method = "osm")
+
+dados_ocorrencias_sp_tidy |>
+  filter(
+    is.na(latitude),
+    (!is.na(logradouro) | !is.na(cep))) |>
+  View()
+
+dados_ocorrencias_sp_tidy |> View()
 
 devtools::install_github("curso-r/munifacil")
 
 dados_ocorrencias_sp_tidy |>
-  writexl::write_xlsx("inst/dados_sp/20240902_dados_ocorrencias_sem_lat_lon.xlsx")
+  left_join(
+    bind_cols(
+      base_enderecos,
+      enderecos_postalcode |> select(latitude_cep = lat, longitude_cep = long)
+    )
+  ) |>
+  left_join(
+    bind_cols(
+      base_enderecos,
+      enderecos_logradouro |> select(latitude_logr = lat, longitude_logr = long)
+    )
+  ) |>
+  mutate(
+    latitude_final = coalesce(latitude, latitude_logr, latitude_cep),
+    longitude_final = coalesce(longitude, longitude_logr, longitude_cep)
+  ) |>
+  writexl::write_xlsx("inst/dados_sp/20240913_dados_ocorrencias_sem_lat_lon.xlsx")
 
 dados_ocorrencias_sp_tidy |>
+  left_join(
+    bind_cols(
+      base_enderecos,
+      enderecos_postalcode |> select(latitude_cep = lat, longitude_cep = long)
+    )
+  ) |>
+  left_join(
+    bind_cols(
+      base_enderecos,
+      enderecos_logradouro |> select(latitude_logr = lat, longitude_logr = long)
+    )
+  ) |>
+  mutate(
+    latitude_final = coalesce(latitude, latitude_logr, latitude_cep),
+    longitude_final = coalesce(longitude, longitude_logr, longitude_cep)
+  ) |>
   readr::write_rds("inst/dados_sp/dados_ocorrencias_sp.rds", compress = "xz")
