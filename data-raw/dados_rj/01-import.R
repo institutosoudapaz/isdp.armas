@@ -56,3 +56,16 @@ dados_ocorrencias <- dplyr::bind_rows(
 
 dados_ocorrencias |>
   readr::write_rds("inst/dados_rj/dados_ocorrencias_rj.rds")
+
+
+# Dados armas complementar
+
+dados_armas_complementar <- readxl::read_excel(
+  "data-raw/dados_rj/raw/RJ 24648_APREENS_ARMA_FOGO_2019_BASE_APREENSAO.xlsx",
+  guess_max = 5000
+) |>
+  janitor::clean_names()
+
+
+dados_armas_complementar |> 
+  readr::write_rds("inst/dados_rj/dados_armas_complementar.rds")
