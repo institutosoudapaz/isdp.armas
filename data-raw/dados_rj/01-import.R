@@ -60,12 +60,54 @@ dados_ocorrencias |>
 
 # Dados armas complementar
 
-dados_armas_complementar <- readxl::read_excel(
-  "data-raw/dados_rj/raw/RJ 24648_APREENS_ARMA_FOGO_2019_BASE_APREENSAO.xlsx",
+dados_armas_complementar_2017 <- readxl::read_excel(
+  "data-raw/dados_rj/raw/24648_APREENS_ARMA_FOGO_2017_BASE_APREENSAO.xlsx",
   guess_max = 5000
 ) |>
   janitor::clean_names()
 
 
-dados_armas_complementar |> 
+dados_armas_complementar_2018 <- readxl::read_excel(
+  "data-raw/dados_rj/raw/24648_APREENS_ARMA_FOGO_2018_BASE_APREENSAO.xlsx",
+  guess_max = 5000
+) |>
+  janitor::clean_names()
+
+dados_armas_complementar_2019 <- readxl::read_excel(
+  "data-raw/dados_rj/raw/RJ 24648_APREENS_ARMA_FOGO_2019_BASE_APREENSAO.xlsx",
+  guess_max = 5000
+) |>
+  janitor::clean_names()
+
+dados_armas_complementar_2020 <- readxl::read_excel(
+  "data-raw/dados_rj/raw/24648_APREENS_ARMA_FOGO_2020_BASE_APREENSAO.xlsx",
+  guess_max = 5000
+) |>
+  janitor::clean_names()
+
+dados_armas_complementar_2021 <- readxl::read_excel(
+  "data-raw/dados_rj/raw/24648_APREENS_ARMA_FOGO_2021_BASE_APREENSAO.xlsx",
+  guess_max = 5000,
+  skip = 2,
+  col_types = c(rep("guess", 16), "date", rep("guess", 4))
+) |>
+  janitor::clean_names()
+
+dados_armas_complementar_2022 <- readxl::read_excel(
+  "data-raw/dados_rj/raw/24648_APREENS_ARMA_FOGO_2022_02_BASE_APREENSAO.xlsx",
+  guess_max = 5000
+) |>
+  janitor::clean_names()
+
+dados_armas_complementar <- dplyr::bind_rows(
+  dados_armas_complementar_2017,
+  dados_armas_complementar_2018,
+  dados_armas_complementar_2019,
+  dados_armas_complementar_2020,
+  dados_armas_complementar_2021,
+  dados_armas_complementar_2022
+)
+
+
+dados_armas_complementar |>
   readr::write_rds("inst/dados_rj/dados_armas_complementar.rds")
