@@ -11,15 +11,8 @@ aplicar_regra_1 <- function(tab, calibre) {
     )
 
   tab |>
-    dplyr::mutate(
-      arma_numero_serie = as.numeric(arma_numero_serie)
-    ) |>
     dplyr::left_join(
-      depara_regra_1 |>
-        dplyr::mutate(
-          num_serie_min = as.numeric(num_serie_min),
-          num_serie_max = as.numeric(num_serie_max)
-        ),
+      depara_regra_1,
       by = dplyr::join_by(
         "arma_calibre_join",
         dplyr::between("arma_numero_serie", "num_serie_min", "num_serie_max")
