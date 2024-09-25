@@ -3,8 +3,7 @@ aplicar_regra_1 <- function(tab, calibre) {
     system.file(
       "tabelas_depara/taurus_regra_1.xlsx",
       package = "isdp.armas"
-    ),
-    col_types = "text"
+    )
   ) |>
     dplyr::rename(
       arma_calibre_join = arma_calibre
