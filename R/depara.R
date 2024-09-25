@@ -1,9 +1,13 @@
-depara_tipo <- function(tab, nome_coluna = "arma_tipo") {
-  tab_depara_tipo <- readxl::read_excel(
-    system.file("tabelas_depara/depara_tipo.xlsx", package = "isdp.armas")
-  ) |>
-    dplyr::distinct(tipo, .keep_all = TRUE)
+ler_depara <- function(aba) {
+  readxl::read_excel(
+    system.file("tabelas_depara/isdp_depara.xlsx", package = "isdp.armas"),
+    sheet = aba
+  )
+}
 
+depara_tipo <- function(tab, nome_coluna = "arma_tipo") {
+  tab_depara_tipo <- ler_depara("tipo") |>
+    dplyr::distinct(tipo, .keep_all = TRUE)
 
   if (nome_coluna != "tipo") {
     tab_depara_tipo <- tab_depara_tipo |>
@@ -20,9 +24,7 @@ depara_tipo <- function(tab, nome_coluna = "arma_tipo") {
 }
 
 depara_calibre <- function(tab, nome_coluna = "calibre") {
-  tab_depara_calibre <- readxl::read_excel(
-    system.file("tabelas_depara/depara_calibre.xlsx", package = "isdp.armas")
-  ) |>
+  tab_depara_calibre <- ler_depara("calibre") |>
     dplyr::distinct(calibre, .keep_all = TRUE)
 
   if (nome_coluna != "calibre") {
@@ -40,9 +42,7 @@ depara_calibre <- function(tab, nome_coluna = "calibre") {
 }
 
 depara_marca <- function(tab, nome_coluna = "marca") {
-  tab_depara_marca <- readxl::read_excel(
-    system.file("tabelas_depara/depara_marca.xlsx", package = "isdp.armas")
-  )
+  tab_depara_marca <- ler_depara("marca")
 
   if (nome_coluna != "marca") {
     tab_depara_marca <- tab_depara_marca |>
@@ -59,9 +59,7 @@ depara_marca <- function(tab, nome_coluna = "marca") {
 }
 
 depara_crime <- function(tab, nome_coluna) {
-  tab_depara_crime <- readxl::read_excel(
-    system.file("tabelas_depara/depara_crimes.xlsx", package = "isdp.armas")
-  ) |>
+  tab_depara_crime <- ler_depara("crimes") |>
     dplyr::rename_with(
       \(x) ifelse(x == "crime_original", nome_coluna, x)
     )

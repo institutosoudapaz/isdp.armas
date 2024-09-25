@@ -1,10 +1,5 @@
 aplicar_regra_1 <- function(tab, calibre) {
-  depara_regra_1 <- readxl::read_excel(
-    system.file(
-      "tabelas_depara/taurus_regra_1.xlsx",
-      package = "isdp.armas"
-    )
-  )
+  depara_regra_1 <- ler_depara("regra_taurus_1")
 
   tab |>
     dplyr::filter(
@@ -42,12 +37,7 @@ aplicar_regra_1 <- function(tab, calibre) {
 
 
 aplicar_regra_2_1 <- function(tab) {
-  depara_regra_2 <- readxl::read_excel(
-    system.file(
-      "tabelas_depara/taurus_regra_2.xlsx",
-      package = "isdp.armas"
-    )
-  )
+  depara_regra_2 <- ler_depara("regra_taurus_2")
 
   tab |>
     dplyr::filter(
@@ -80,12 +70,7 @@ aplicar_regra_2_1 <- function(tab) {
 }
 
 aplicar_regra_2_2 <- function(tab) {
-  depara_regra_2 <- readxl::read_excel(
-    system.file(
-      "tabelas_depara/taurus_regra_2.xlsx",
-      package = "isdp.armas"
-    )
-  )
+  depara_regra_2 <- ler_depara("regra_taurus_3")
 
   tab |>
     dplyr::filter(
