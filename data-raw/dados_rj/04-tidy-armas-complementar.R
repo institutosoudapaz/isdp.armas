@@ -19,7 +19,8 @@ dados_armas_formatado <- dados_armas_complementar |>
     arma_pais_fabricacao_original = pais,
     flag_restrita = restrita,
     patrimoniada,
-    flag_arma_original
+    flag_arma_original,
+    tipo_delito
   ) |>
   dplyr::mutate(
     dplyr::across(
@@ -96,6 +97,9 @@ armas_final <- dados_armas_consolidado |>
     arma_modelo,
     flag_restrita,
     patrimoniada,
+    flag_arma_policia_prop,
+    flag_mdoip,
+    flag_calibre_policial,
     flag_arma_policial,
     flag_arma_original
   )

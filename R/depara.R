@@ -41,6 +41,17 @@ depara_calibre <- function(tab, nome_coluna = "calibre") {
     )
 }
 
+depara_calibre_policial <- function(tab) {
+  tab_depara_calibre <- ler_depara("calibre_arma_policial") |>
+    dplyr::distinct(arma_calibre_final,	arma_tipo_final, .keep_all = TRUE)
+
+  tab |>
+    dplyr::left_join(
+      tab_depara_calibre,
+      by = c("arma_calibre_final", "arma_tipo_final")
+    )
+}
+
 depara_marca <- function(tab, nome_coluna = "marca") {
   tab_depara_marca <- ler_depara("marca")
 
