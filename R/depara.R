@@ -1,5 +1,4 @@
-depara_tipo <- function(tab, nome_coluna = "arma_tipo"){
-
+depara_tipo <- function(tab, nome_coluna = "arma_tipo") {
   tab_depara_tipo <- readxl::read_excel(
     system.file("tabelas_depara/depara_tipo.xlsx", package = "isdp.armas")
   ) |>
@@ -55,6 +54,21 @@ depara_marca <- function(tab, nome_coluna = "marca") {
   tab |>
     dplyr::left_join(
       tab_depara_marca,
+      by = nome_coluna
+    )
+}
+
+depara_crime <- function(tab, nome_coluna) {
+  tab_depara_crime <- readxl::read_excel(
+    system.file("tabelas_depara/depara_crimes.xlsx", package = "isdp.armas")
+  ) |>
+    dplyr::rename_with(
+      \(x) ifelse(x == "crime_original", nome_coluna, x)
+    )
+
+  tab |>
+    dplyr::left_join(
+      tab_depara_crime,
       by = nome_coluna
     )
 }
