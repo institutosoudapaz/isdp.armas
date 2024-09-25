@@ -70,7 +70,7 @@ aplicar_regra_2_1 <- function(tab) {
 }
 
 aplicar_regra_2_2 <- function(tab) {
-  depara_regra_2 <- ler_depara("regra_taurus_3")
+  depara_regra_2 <- ler_depara("regra_taurus_2")
 
   tab |>
     dplyr::filter(
@@ -103,12 +103,7 @@ aplicar_regra_2_2 <- function(tab) {
 }
 
 aplicar_regra_3 <- function(tab) {
-  depara_regra_3 <- readxl::read_excel(
-    system.file(
-      "tabelas_depara/taurus_regra_3.xlsx",
-      package = "isdp.armas"
-    )
-  )
+  depara_regra_3 <- ler_depara("regra_taurus_3")
 
   dados_armas_consolidado |>
     dplyr::filter(
