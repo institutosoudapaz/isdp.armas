@@ -58,9 +58,9 @@ tab_regra_3 <- aplicar_regra_3(dados_armas_consolidado)
 
 tab_taurus <- dplyr::bind_rows(
   tab_regra_1,
-  tab_regra_2_1 |> dplyr::mutate(arma_ano_fabricacao = as.character(arma_ano_fabricacao)),
-  tab_regra_2_2 |> dplyr::mutate(arma_ano_fabricacao = as.character(arma_ano_fabricacao)),
-  tab_regra_3 |> dplyr::mutate(arma_ano_fabricacao = as.character(arma_ano_fabricacao))
+  tab_regra_2_1,
+  tab_regra_2_2,
+  tab_regra_3,
 )
 
 # Base final
@@ -144,3 +144,4 @@ armas_final |>
     arma_ano_fabricacao
   ) |>
   writexl::write_xlsx("data-raw/dados_rj/validacao/regra_taurus.xlsx")
+

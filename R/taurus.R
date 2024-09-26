@@ -31,6 +31,7 @@ aplicar_regra_1 <- function(tab, calibre) {
     ) |>
     dplyr::distinct(id_bo, id_arma, .keep_all = TRUE) |>
     dplyr::mutate(
+      arma_ano_fabricacao = as.character(arma_ano_fabricacao),
       padrao_taurus = ifelse(is.na(arma_ano_fabricacao), NA_character_, "Regra 1")
     )
 }
@@ -65,6 +66,7 @@ aplicar_regra_2_1 <- function(tab) {
       arma_ano_fabricacao
     ) |>
     dplyr::mutate(
+      arma_ano_fabricacao = as.character(arma_ano_fabricacao),
       padrao_taurus = ifelse(is.na(arma_ano_fabricacao), NA_character_, "Regra 2.1")
     )
 }
@@ -98,6 +100,7 @@ aplicar_regra_2_2 <- function(tab) {
       arma_ano_fabricacao
     ) |>
     dplyr::mutate(
+      arma_ano_fabricacao = as.character(arma_ano_fabricacao),
       padrao_taurus = ifelse(is.na(arma_ano_fabricacao), NA_character_, "Regra 2.2")
     )
 }
@@ -131,6 +134,7 @@ aplicar_regra_3 <- function(tab) {
       arma_ano_fabricacao
     ) |>
     dplyr::mutate(
+      arma_ano_fabricacao = as.character(arma_ano_fabricacao),
       padrao_taurus = ifelse(is.na(arma_ano_fabricacao), NA_character_, "Regra 3")
     )
 
