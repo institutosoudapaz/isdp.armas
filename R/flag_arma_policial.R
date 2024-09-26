@@ -29,11 +29,41 @@ gerar_flag_mdoip <- function(tab) {
 }
 
 gerar_flag_arma_policial <- function(tab, base) {
-  if (base == "rj_complementar") {
+  if (base == "rj") {
+    tab_mdoip <- ler_depara("crimes") |>
+      dplyr::filter(crime_formatado == "MDOIP")
+
+    tab_ocorrencias_mdoip <- dados_ocorrencias |>
+      dplyr::mutate(
+        flag_mdoip = dplyr::case_when(
+          titulo %in% tab_mdoip$crime_original |
+            titulo_do %in% tab_mdoip$crime_original ~ TRUE,
+          TRUE ~ FALSE
+        )
+      ) |>
+      dplyr::distinct(id_bo = controle, flag_mdoip) |>
+      dplyr::group_by(id_bo) |>
+      dplyr::summarise(
+        flag_mdoip = any(flag_mdoip)
+      )
+
     tab |>
-      gerar_flag_arma_policia_prop(base = "rj_complementar") |> 
-      gerar_flag_mdoip() |> 
-      depara_calibre_policial() |> 
+      dplyr::left_join(
+        tab_ocorrencias_mdoip,
+        by = "id_bo"
+      ) |>
+      depara_calibre_policial() |>
+      dplyr::mutate(
+        flag_arma_policial = dplyr::case_when(
+          flag_calibre_policial & flag_mdoip ~ TRUE,
+          TRUE ~ FALSE
+        )
+      )
+  } else if (base == "rj_complementar") {
+    tab |>
+      gerar_flag_arma_policia_prop(base = "rj_complementar") |>
+      gerar_flag_mdoip() |>
+      depara_calibre_policial() |>
       dplyr::mutate(
         flag_arma_policial = dplyr::case_when(
           sn_disponivel != "Sim" ~ FALSE,

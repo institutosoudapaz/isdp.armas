@@ -1,5 +1,5 @@
 gerar_id_arma <- function(tab, base) {
-  if (base == "rj_complementar") {
+  if (base %in% c("rj", "rj_complementar")) {
     tab |>
       dplyr::mutate(
         id_arma = vctrs::vec_group_id(
