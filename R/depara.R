@@ -1,6 +1,9 @@
 ler_depara <- function(aba) {
   readxl::read_excel(
-    system.file("tabelas_depara/isdp_depara.xlsx", package = "isdp.armas"),
+    system.file(
+      "tabelas_depara/gabarito_correcoes_pacote_armas.xlsx",
+      package = "isdp.armas"
+    ),
     sheet = aba
   )
 }
@@ -43,7 +46,7 @@ depara_calibre <- function(tab, nome_coluna = "calibre") {
 
 depara_calibre_policial <- function(tab) {
   tab_depara_calibre <- ler_depara("calibre_arma_policial") |>
-    dplyr::distinct(arma_calibre_final,	arma_tipo_final, .keep_all = TRUE)
+    dplyr::distinct(arma_calibre_final, arma_tipo_final, .keep_all = TRUE)
 
   tab |>
     dplyr::left_join(

@@ -155,3 +155,35 @@ dados_armas_complementar |>
   dplyr::count(patrimoniada, sort = TRUE) |> 
   writexl::write_xlsx("data-raw/dados_rj/validacao/patrimoniada_rj.xlsx")
   
+
+# De para calibre
+
+tab_depara_calibre <- ler_depara("calibre") |> 
+  dplyr::distinct()
+
+chaves_repitidas <- tab_depara_calibre |>
+  dplyr::count(calibre, sort = TRUE) |> 
+  dplyr::filter(n > 1) |> 
+  dplyr::pull(calibre)
+
+tab_depara_calibre |> 
+  dplyr::filter(calibre %in% chaves_repitidas)  |> 
+  dplyr::arrange(calibre) |> 
+  writexl::write_xlsx("data-raw/dados_rj/validacao/depara_calibre_duplicado.xlsx")
+
+
+# De para marca
+
+
+tab_depara_marca <- ler_depara("marca") |> 
+  dplyr::distinct()
+
+chaves_repitidas <- tab_depara_marca |>
+  dplyr::count(arma_marca, sort = TRUE) |> 
+  dplyr::filter(n > 1) |> 
+  dplyr::pull(arma_marca)
+
+tab_depara_marca |> 
+  dplyr::filter(arma_marca %in% chaves_repitidas)  |> 
+  dplyr::arrange(arma_marca) |> 
+  writexl::write_xlsx("data-raw/dados_rj/validacao/depara_marca_duplicado.xlsx")
