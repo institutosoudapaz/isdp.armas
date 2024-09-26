@@ -108,7 +108,7 @@ aplicar_regra_2_2 <- function(tab) {
 aplicar_regra_3 <- function(tab) {
   depara_regra_3 <- ler_depara("regra_taurus_3")
 
-  dados_armas_consolidado |>
+  tab |>
     dplyr::filter(
       !is.na(arma_numero_serie),
       nchar(arma_numero_serie) == 9,
