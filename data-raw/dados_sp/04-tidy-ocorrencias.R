@@ -235,26 +235,26 @@ dados_ocorrencias_sp_tidy <- dados_ocorrencias_sp |>
   )
 
 base_enderecos <- dados_ocorrencias_sp_tidy |>
-  dplyr::filter(is.na(latitude), (!is.na(logradouro) | !is.na(cep))) |>
+  dplyr::filter((is.na(latitude) | latitude == 0), (!is.na(logradouro) | !is.na(cep))) |>
   dplyr::distinct(logradouro, numero_logradouro, cidade, cep)
 
-enderecos <- paste(resuminho$`Nome do Logradouro`, resuminho$Número)
+#enderecos <- paste(resuminho$`Nome do Logradouro`, resuminho$Número)
 
-# enderecos_postalcode <- tidygeocoder::geo(
-#   country = rep("Brazil", nrow(base_enderecos)),
-#   postalcode = base_enderecos$cep,
-#   method = "osm")
-#
-# enderecos_logradouro <- tidygeocoder::geo(
-#   country = rep("Brazil", nrow(base_enderecos)),
-#   city = base_enderecos$cidade,
-#   state = rep("São Paulo", nrow(base_enderecos)),
-#   street = paste(base_enderecos$logradouro, base_enderecos$numero_logradouro),
-#   method = "osm")
+enderecos_postalcode <- tidygeocoder::geo(
+  country = rep("Brazil", nrow(base_enderecos)),
+  postalcode = base_enderecos$cep,
+  method = "osm")
+
+enderecos_logradouro <- tidygeocoder::geo(
+  country = rep("Brazil", nrow(base_enderecos)),
+  city = base_enderecos$cidade,
+  state = rep("São Paulo", nrow(base_enderecos)),
+  street = paste(base_enderecos$logradouro, base_enderecos$numero_logradouro),
+  method = "osm")
 
 dados_ocorrencias_sp_tidy |>
   filter(
-    is.na(latitude),
+    (latitude == 0 |is.na(latitude)),
     (!is.na(logradouro) | !is.na(cep))) |>
   View()
 
