@@ -54,6 +54,7 @@ colunas <- c(
   "descr_modo_objeto",
   "calibre_arma",
   "numero_arma",
+  "flag_ato_infracional",
   "marca_arma",
   "descr_arma_fogo",
   "estado_arma",
