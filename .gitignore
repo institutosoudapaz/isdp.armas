@@ -14,3 +14,4 @@ inst/dados_sp/dados_armas_sp.rds
 inst/dados_sp/dados_ocorrencias_sp.rds
 inst/dados_sp/dados_vitimas_sp.rds
 .vscode/settings.json
+data-raw/dados_sp/raw/SP armas apreendidas estadual SIC 55366246800_12042024_armas SP.xlsx
