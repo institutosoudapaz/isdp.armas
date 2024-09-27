@@ -4,13 +4,13 @@ aplicar_regra_1 <- function(tab, calibre) {
   tab |>
     dplyr::filter(
       sn_disponivel == "Sim",
-      !is.na(arma_numero_serie),
-      !stringr::str_detect(arma_numero_serie, "[A-Za-z\\-/]"),
+      !is.na(arma_numero_serie_formatado),
+      !stringr::str_detect(arma_numero_serie_formatado, "[A-Z\\-/]"),
       arma_marca_final == "taurus",
-      arma_tipo_final == "revolver"
+      tipo_formatado == "revolver"
     ) |>
     dplyr::mutate(
-      arma_numero_serie = as.numeric(arma_numero_serie),
+      arma_numero_serie_formatado = as.numeric(arma_numero_serie_formatado),
       arma_calibre = ifelse(
         stringr::str_detect(arma_calibre_final, "[.](32|22|38) "),
         stringr::str_sub(arma_calibre_final, 1, 3),
@@ -21,7 +21,7 @@ aplicar_regra_1 <- function(tab, calibre) {
       depara_regra_1,
       by = dplyr::join_by(
         "arma_calibre",
-        dplyr::between("arma_numero_serie", "num_serie_min", "num_serie_max")
+        dplyr::between("arma_numero_serie_formatado", "num_serie_min", "num_serie_max")
       )
     ) |>
     dplyr::select(
@@ -43,15 +43,15 @@ aplicar_regra_2_1 <- function(tab) {
   tab |>
     dplyr::filter(
       sn_disponivel == "Sim",
-      !is.na(arma_numero_serie),
-      nchar(arma_numero_serie) == 8,
-      stringr::str_detect(arma_numero_serie, "^[A-Z]{3}"),
+      !is.na(arma_numero_serie_formatado),
+      nchar(arma_numero_serie_formatado) == 8,
+      stringr::str_detect(arma_numero_serie_formatado, "^[A-Z]{3}"),
       arma_marca_final == "taurus",
-      arma_tipo_final == "pistola"
+      tipo_formatado == "pistola"
     ) |>
     dplyr::mutate(
-      arma_ns_primeira_letra = stringr::str_sub(arma_numero_serie, 2, 2),
-      arma_ns_segunda_letra = stringr::str_sub(arma_numero_serie, 3, 3)
+      arma_ns_primeira_letra = stringr::str_sub(arma_numero_serie_formatado, 2, 2),
+      arma_ns_segunda_letra = stringr::str_sub(arma_numero_serie_formatado, 3, 3)
     ) |>
     dplyr::left_join(
       depara_regra_2,
@@ -77,15 +77,15 @@ aplicar_regra_2_2 <- function(tab) {
   tab |>
     dplyr::filter(
       sn_disponivel == "Sim",
-      !is.na(arma_numero_serie),
-      nchar(arma_numero_serie) %in% c(7, 8),
-      stringr::str_detect(arma_numero_serie, "^[A-Z]{2}[0-9]"),
+      !is.na(arma_numero_serie_formatado),
+      nchar(arma_numero_serie_formatado) %in% c(7, 8),
+      stringr::str_detect(arma_numero_serie_formatado, "^[A-Z]{2}[0-9]"),
       arma_marca_final == "taurus",
-      arma_tipo_final == "revolver"
+      tipo_formatado == "revolver"
     ) |>
     dplyr::mutate(
-      arma_ns_primeira_letra = stringr::str_sub(arma_numero_serie, 1, 1),
-      arma_ns_segunda_letra = stringr::str_sub(arma_numero_serie, 2, 2)
+      arma_ns_primeira_letra = stringr::str_sub(arma_numero_serie_formatado, 1, 1),
+      arma_ns_segunda_letra = stringr::str_sub(arma_numero_serie_formatado, 2, 2)
     ) |>
     dplyr::left_join(
       depara_regra_2,
@@ -110,15 +110,15 @@ aplicar_regra_3 <- function(tab) {
 
   tab |>
     dplyr::filter(
-      !is.na(arma_numero_serie),
-      nchar(arma_numero_serie) == 9,
-      stringr::str_detect(arma_numero_serie, "^[A-Z]{3}"),
+      !is.na(arma_numero_serie_formatado),
+      nchar(arma_numero_serie_formatado) == 9,
+      stringr::str_detect(arma_numero_serie_formatado, "^[A-Z]{3}"),
       arma_marca_final == "taurus"
     ) |>
     dplyr::mutate(
-      arma_ns_primeira_letra = stringr::str_sub(arma_numero_serie, 1, 1),
-      arma_ns_segunda_letra = stringr::str_sub(arma_numero_serie, 2, 2),
-      arma_ns_terceira_letra = stringr::str_sub(arma_numero_serie, 3, 3)
+      arma_ns_primeira_letra = stringr::str_sub(arma_numero_serie_formatado, 1, 1),
+      arma_ns_segunda_letra = stringr::str_sub(arma_numero_serie_formatado, 2, 2),
+      arma_ns_terceira_letra = stringr::str_sub(arma_numero_serie_formatado, 3, 3)
     ) |>
     dplyr::left_join(
       depara_regra_3,
