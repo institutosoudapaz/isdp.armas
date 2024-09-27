@@ -42,7 +42,7 @@ dados_armas_consolidado <- dados_armas_formatado |>
   gerar_arma_marca_final() |> 
   gerar_sn_disponivel() |> 
   gerar_numero_serie_formatado() |> 
-  gerar_flag_arma(base = "rj_complementar") |> 
+  gerar_flag_arma() |> 
   gerar_flag_arma_artesanal() |>
   gerar_id_arma(base = "rj_complementar") |> 
   gerar_flag_arma_policial(base = "rj_complementar")

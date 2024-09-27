@@ -83,7 +83,7 @@ dados_armas_consolidado <- dados_armas_formatado |>
   gerar_sn_disponivel() |>
   gerar_numero_serie_formatado() |> 
   gerar_flag_arma_artesanal() |>
-  gerar_flag_arma(base = "sp") |>
+  gerar_flag_arma() |>
   gerar_flag_arma_policial(base = "sp")
 
 # Aplicação das regras Taurus

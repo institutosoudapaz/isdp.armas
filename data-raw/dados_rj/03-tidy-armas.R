@@ -33,7 +33,7 @@ dados_armas_consolidado <- dados_armas_formatado |>
   gerar_tipo_arma_final() |>
   gerar_arma_calibre_final() |>
   gerar_arma_marca_final() |>
-  gerar_flag_arma(base = "rj") |>
+  gerar_flag_arma() |>
   gerar_flag_arma_artesanal() |>
   gerar_id_arma(base = "rj") |>
   gerar_flag_arma_policial(base = "rj")
