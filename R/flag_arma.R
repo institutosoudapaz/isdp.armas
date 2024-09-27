@@ -1,7 +1,7 @@
 gerar_flag_arma_artesanal <- function(tab) {
   tab |>
     dplyr::mutate(
-      flag_arma_artesanal = stringr::str_detect(arma_tipo_final, "artesanal")
+      flag_arma_artesanal = stringr::str_detect(tipo_formatado, "artesanal")
     )
 }
 

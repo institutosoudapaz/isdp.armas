@@ -3,11 +3,11 @@ gerar_arma_calibre_final <- function(tab) {
     dplyr::mutate(
       arma_calibre_final = dplyr::case_when(
         calibre_formatado_final == ".32" &
-          arma_tipo_final == "espingarda" ~ "32 gauge",
+          tipo_formatado == "espingarda" ~ "32 gauge",
         calibre_formatado_final == ".32" &
-          arma_tipo_final %in% c("revolver", "garrucha") ~ ".32 S&W long",
+          tipo_formatado %in% c("revolver", "garrucha") ~ ".32 S&W long",
         calibre_formatado_final == ".32" &
-          arma_tipo_final %in% c("pistola", "carabina", "submetralhadora") ~ ".32 acp",
+          tipo_formatado %in% c("pistola", "carabina", "submetralhadora") ~ ".32 acp",
         stringr::str_detect(calibre_formatado_final, "32$") ~ ".32 S&W long",
         TRUE ~ calibre_formatado_final
       ),

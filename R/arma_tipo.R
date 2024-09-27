@@ -12,14 +12,11 @@ gerar_flag_tipo_arma_incompativel <- function(tab) {
 
 gerar_tipo_arma_final <- function(tab) {
   tab |>
+    dplyr::rename(
+      compatibilidade_tipo = tipo_arma_calibre
+    ) |> 
     dplyr::mutate(
-      arma_tipo_final = dplyr::case_when(
-        tipo_formatado == "artesanal" ~ "artesanal",
-        !flag_tipo_arma_incompativel_calibre ~ tipo_formatado,
-        !is.na(tipo_arma_calibre) ~ tipo_arma_calibre,
-        TRUE ~ tipo_formatado
-      ),
-      arma_tipo_final = tolower(arma_tipo_final),
-      arma_tipo_final = stringr::str_squish(arma_tipo_final)
+      tipo_formatado = tolower(tipo_formatado),
+      tipo_formatado = stringr::str_squish(tipo_formatado)
     )
 }

@@ -187,3 +187,11 @@ tab_depara_marca |>
   dplyr::filter(arma_marca %in% chaves_repitidas)  |> 
   dplyr::arrange(arma_marca) |> 
   writexl::write_xlsx("data-raw/dados_rj/validacao/depara_marca_duplicado.xlsx")
+
+
+# tipo
+
+ler_depara("tipo") |> 
+  dplyr::mutate(tipo = tolower(tipo)) |> 
+  dplyr::distinct(tipo, tipo_formatado, flag_arma) |> 
+  writexl::write_xlsx("~/Desktop/tipo.xlsx")
