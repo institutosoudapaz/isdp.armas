@@ -26,6 +26,10 @@ gerar_numero_serie_formatado <- function(tab) {
         sn_disponivel == "Sim",
         toupper(arma_numero_serie),
         ""
+      ),
+      arma_numero_serie_formatado = stringr::str_remove_all(
+        arma_numero_serie_formatado,
+        " +"
       )
     )
 }
