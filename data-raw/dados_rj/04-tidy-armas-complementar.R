@@ -5,9 +5,6 @@ dados_armas_complementar <- readr::read_rds("inst/dados_rj/dados_armas_complemen
 # Fazendo de-paras
 
 dados_armas_formatado <- dados_armas_complementar |>
-  dplyr::mutate(
-    flag_arma_original = classe == "ARMA DE FOGO",
-  ) |>
   dplyr::select(
     id_bo = controle_interno_sco,
     arma_numero_serie = numero_de_serie,
@@ -17,12 +14,13 @@ dados_armas_formatado <- dados_armas_complementar |>
     arma_origem = origem_arma,
     arma_modelo = modelo,
     arma_pais_fabricacao_original = pais,
+    arma_classe = classe,
     flag_restrita = restrita,
     patrimoniada,
-    flag_arma_original,
     tipo_delito
   ) |>
   dplyr::mutate(
+    flag_arma_original = arma_classe == "ARMA DE FOGO",
     dplyr::across(
       c(arma_calibre, arma_marca, arma_tipo),
       \(x) x |>

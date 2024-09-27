@@ -3,10 +3,11 @@ devtools::load_all()
 dados_armas <- readr::read_rds("inst/dados_rj/dados_armas_rj.rds")
 dados_ocorrencias <- readr::read_rds("inst/dados_rj/dados_ocorrencias_rj.rds")
 
+# Fazendo de-paras
+
 dados_armas_formatado <- dados_armas |>
   dplyr::select(
     id_bo = controle,
-    ano_bo,
     arma_calibre = calibre,
     arma_marca = marca,
     arma_tipo = tipo,
@@ -24,6 +25,8 @@ dados_armas_formatado <- dados_armas |>
   depara_calibre("arma_calibre") |>
   depara_marca("arma_marca") |>
   depara_tipo("arma_tipo")
+
+# Aplicando regras de negócio
 
 dados_armas_consolidado <- dados_armas_formatado |>
   gerar_flag_tipo_arma_incompativel() |>
