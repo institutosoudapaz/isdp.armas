@@ -26,6 +26,7 @@ dados_ocorrencias_sp <- dados_sp |>
     datahora_registro_bo,
     data_comunicacao_bo,
     autoria_bo,
+    flag_ato_infracional,
     flag_flagrante,
     flag_status,
     rubrica,
@@ -240,25 +241,25 @@ base_enderecos <- dados_ocorrencias_sp_tidy |>
 
 #enderecos <- paste(resuminho$`Nome do Logradouro`, resuminho$Número)
 
-enderecos_postalcode <- tidygeocoder::geo(
-  country = rep("Brazil", nrow(base_enderecos)),
-  postalcode = base_enderecos$cep,
-  method = "osm")
+# enderecos_postalcode <- tidygeocoder::geo(
+#   country = rep("Brazil", nrow(base_enderecos)),
+#   postalcode = base_enderecos$cep,
+#   method = "osm")
+#
+# enderecos_logradouro <- tidygeocoder::geo(
+#   country = rep("Brazil", nrow(base_enderecos)),
+#   city = base_enderecos$cidade,
+#   state = rep("São Paulo", nrow(base_enderecos)),
+#   street = paste(base_enderecos$logradouro, base_enderecos$numero_logradouro),
+#   method = "osm")
 
-enderecos_logradouro <- tidygeocoder::geo(
-  country = rep("Brazil", nrow(base_enderecos)),
-  city = base_enderecos$cidade,
-  state = rep("São Paulo", nrow(base_enderecos)),
-  street = paste(base_enderecos$logradouro, base_enderecos$numero_logradouro),
-  method = "osm")
-
-dados_ocorrencias_sp_tidy |>
-  filter(
-    (latitude == 0 |is.na(latitude)),
-    (!is.na(logradouro) | !is.na(cep))) |>
-  View()
-
-dados_ocorrencias_sp_tidy |> View()
+# dados_ocorrencias_sp_tidy |>
+#   filter(
+#     (latitude == 0 |is.na(latitude)),
+#     (!is.na(logradouro) | !is.na(cep))) |>
+#   View()
+#
+# dados_ocorrencias_sp_tidy |> View()
 
 devtools::install_github("curso-r/munifacil")
 
@@ -281,21 +282,45 @@ dados_ocorrencias_sp_tidy |>
   ) |>
   writexl::write_xlsx("inst/dados_sp/20240913_dados_ocorrencias_sem_lat_lon.xlsx")
 
+latlons_completos <- readRDS("inst/dados_sp/dados_ocorrencias_sp_latlon.rds") |>
+  select(id_bo, latitude_cep, longitude_cep, latitude_logr, longitude_logr)
+
 dados_ocorrencias_sp_tidy |>
-  left_join(
-    bind_cols(
-      base_enderecos,
-      enderecos_postalcode |> select(latitude_cep = lat, longitude_cep = long)
-    )
-  ) |>
-  left_join(
-    bind_cols(
-      base_enderecos,
-      enderecos_logradouro |> select(latitude_logr = lat, longitude_logr = long)
-    )
-  ) |>
+  # left_join(
+  #   bind_cols(
+  #     base_enderecos,
+  #     enderecos_postalcode |> select(latitude_cep = lat, longitude_cep = long)
+  #   )
+  # ) |>
+  # left_join(
+  #   bind_cols(
+  #     base_enderecos,
+  #     enderecos_logradouro |> select(latitude_logr = lat, longitude_logr = long)
+  #   )
+  # ) |>
+  left_join(latlons_completos) |>
   mutate(
     latitude_final = coalesce(latitude, latitude_logr, latitude_cep),
     longitude_final = coalesce(longitude, longitude_logr, longitude_cep)
   ) |>
   readr::write_rds("inst/dados_sp/dados_ocorrencias_sp.rds", compress = "xz")
+
+dados_ocorrencias_sp_tidy |>
+  # left_join(
+  #   bind_cols(
+  #     base_enderecos,
+  #     enderecos_postalcode |> select(latitude_cep = lat, longitude_cep = long)
+  #   )
+  # ) |>
+  # left_join(
+  #   bind_cols(
+  #     base_enderecos,
+  #     enderecos_logradouro |> select(latitude_logr = lat, longitude_logr = long)
+  #   )
+  # ) |>
+  left_join(latlons_completos) |>
+  mutate(
+    latitude_final = coalesce(latitude, latitude_logr, latitude_cep),
+    longitude_final = coalesce(longitude, longitude_logr, longitude_cep)
+  ) |>
+  writexl::write_xlsx("inst/dados_sp/20240930_ocorrencias.xlsx")

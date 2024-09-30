@@ -53,11 +53,11 @@ dados_armas_formatado <- dados_armas |>
   dplyr::group_by(id_arma) |>
   dplyr::summarise(
     dplyr::across(
-      c(descr_conduta, rubrica, desdobramento, estado_arma),
+      c(descr_conduta, rubrica, desdobramento, arma_estado),
       \(x) paste0(unique(x), collapse = " -- ")
     ),
     dplyr::across(
-      -c(descr_conduta, rubrica, desdobramento, estado_arma),
+      -c(descr_conduta, rubrica, desdobramento, arma_estado),
       dplyr::first
     )
   ) |>
@@ -81,7 +81,7 @@ dados_armas_consolidado <- dados_armas_formatado |>
   gerar_tipo_arma_final() |>
   gerar_arma_calibre_final() |>
   gerar_sn_disponivel() |>
-  gerar_numero_serie_formatado() |> 
+  gerar_numero_serie_formatado() |>
   gerar_flag_arma_artesanal() |>
   gerar_flag_arma() |>
   gerar_flag_arma_policial(base = "sp")
@@ -108,14 +108,15 @@ armas_final <- dados_armas_consolidado |>
     by = c("id_bo", "id_arma")
   ) |>
   dplyr::select(
-    id_bo, 
-    id_arma, 
+    id_bo,
+    id_arma,
     cont_arma,
     arma_calibre_original = arma_calibre,
     arma_calibre_formatado = calibre_formatado_final,
     arma_calibre_final = arma_calibre_final,
     arma_numero_serie_original = arma_numero_serie,
     arma_numero_serie_formatado,
+    arma_estado,
     sn_disponivel,
     arma_marca_original = arma_marca,
     arma_marca_final = arma_marca_final,
@@ -126,7 +127,12 @@ armas_final <- dados_armas_consolidado |>
     flag_tipo_arma_incompativel_calibre,
     arma_ano_fabricacao,
     flag_arma,
-    flag_arma_artesanal
+    flag_arma_artesanal,
+    arma_proprietario_nome,
+    flag_arma_policia_desd,
+    flag_arma_policia_prop,
+    flag_arma_policia_prop_indisp,
+    flag_arma_policia
   )
 
 # Gerando arquivo
@@ -134,7 +140,7 @@ armas_final <- dados_armas_consolidado |>
 data <- stringr::str_remove_all(Sys.Date(), "-")
 writexl::write_xlsx(
   armas_final,
-  glue::glue("inst/dados_rj/{data}_dados_armas_complementar.xlsx")
+  glue::glue("inst/dados_sp/{data}_dados_armas.xlsx")
 )
 
 # Validação
@@ -169,3 +175,10 @@ armas_final |>
     arma_ano_fabricacao
   ) |>
   writexl::write_xlsx("data-raw/dados_sp/validacao/regra_taurus.xlsx")
+
+# base armas completa -----------------------------------------------------
+
+armas_final |>
+  left_join(
+    readRDS("inst/dados_sp/dados_ocorrencias_sp.rds")
+  )
