@@ -70,7 +70,7 @@ gerar_flag_arma_policial <- function(tab, base) {
         tab_ocorrencias_mdoip,
         by = "id_bo"
       ) |>
-      depara_calibre_policial() |>
+      depara_calibre_policial(base = "rj") |>
       dplyr::mutate(
         flag_arma_policial = dplyr::case_when(
           flag_calibre_policial & flag_mdoip ~ TRUE,
@@ -81,7 +81,7 @@ gerar_flag_arma_policial <- function(tab, base) {
     tab |>
       gerar_flag_arma_policia_prop(base = "rj_complementar") |>
       gerar_flag_mdoip() |>
-      depara_calibre_policial() |>
+      depara_calibre_policial(base = "rj_complementar") |>
       dplyr::mutate(
         flag_arma_policial = dplyr::case_when(
           sn_disponivel != "Sim" | is.na(sn_disponivel) ~ FALSE,
@@ -93,7 +93,7 @@ gerar_flag_arma_policial <- function(tab, base) {
   } else if (base == "sp") {
     tab |>
       gerar_flag_arma_policia_prop(base = "sp") |> 
-      depara_calibre_policial() |>
+      depara_calibre_policial(base = "sp") |>
       dplyr::mutate(
         flag_arma_policia = dplyr::case_when(
           sn_disponivel != "Sim" | is.na(sn_disponivel) ~ FALSE,

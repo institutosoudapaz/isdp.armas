@@ -44,15 +44,26 @@ depara_calibre <- function(tab, nome_coluna = "calibre") {
     )
 }
 
-depara_calibre_policial <- function(tab) {
-  tab_depara_calibre <- ler_depara("calibre_arma_policial") |>
-    dplyr::distinct(arma_calibre_final, tipo_formatado, .keep_all = TRUE)
+depara_calibre_policial <- function(tab, base) {
+  if (base == "rj_complementar") {
+    tab_depara_calibre <- ler_depara("calibre_arma_policial") |>
+      dplyr::distinct()
 
-  tab |>
-    dplyr::left_join(
-      tab_depara_calibre,
-      by = c("arma_calibre_final", "tipo_formatado")
-    )
+    tab |>
+      dplyr::left_join(
+        tab_depara_calibre,
+        by = c("arma_calibre_final", "tipo_formatado", "arma_marca_final")
+      )
+  } else {
+    tab_depara_calibre <- ler_depara("calibre_arma_policial") |>
+      dplyr::distinct(arma_calibre_final, tipo_formatado, flag_calibre_policial)
+
+    tab |>
+      dplyr::left_join(
+        tab_depara_calibre,
+        by = c("arma_calibre_final", "tipo_formatado")
+      )
+  }
 }
 
 depara_marca <- function(tab, nome_coluna = "marca") {
