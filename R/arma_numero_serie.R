@@ -1,7 +1,9 @@
 gerar_sn_disponivel <- function(tab) {
   tab |>
     dplyr::mutate(
-      arma_sn_formatado = tolower(arma_numero_serie),
+      arma_sn_formatado = arma_numero_serie |>
+        tolower() |>
+        stringr::str_remove_all(" +"),
       sn_disponivel = dplyr::case_when(
         is.na(arma_sn_formatado) | arma_sn_formatado == "" ~ NA_character_,
         nchar(arma_sn_formatado) <= 4 ~ "não aparente",
