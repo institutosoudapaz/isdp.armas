@@ -24,12 +24,11 @@ aplicar_regra_1 <- function(tab, calibre) {
         dplyr::between("arma_numero_serie_formatado", "num_serie_min", "num_serie_max")
       )
     ) |>
-    dplyr::select(
+    dplyr::distinct(
       id_bo,
       id_arma,
       arma_ano_fabricacao
     ) |>
-    dplyr::distinct(id_bo, id_arma, .keep_all = TRUE) |>
     dplyr::mutate(
       arma_ano_fabricacao = as.character(arma_ano_fabricacao),
       padrao_taurus = ifelse(is.na(arma_ano_fabricacao), NA_character_, "Regra 1")
@@ -60,7 +59,7 @@ aplicar_regra_2_1 <- function(tab) {
         "arma_ns_segunda_letra"
       )
     ) |>
-    dplyr::select(
+    dplyr::distinct(
       id_bo,
       id_arma,
       arma_ano_fabricacao
@@ -94,7 +93,7 @@ aplicar_regra_2_2 <- function(tab) {
         "arma_ns_segunda_letra"
       )
     ) |>
-    dplyr::select(
+    dplyr::distinct(
       id_bo,
       id_arma,
       arma_ano_fabricacao
@@ -128,7 +127,7 @@ aplicar_regra_3 <- function(tab) {
         "arma_ns_terceira_letra"
       )
     ) |>
-    dplyr::select(
+    dplyr::distinct(
       id_bo,
       id_arma,
       arma_ano_fabricacao
