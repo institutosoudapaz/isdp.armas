@@ -6,8 +6,12 @@ dados_armas_complementar <- readr::read_rds("inst/dados_rj/dados_armas_complemen
 
 dados_armas_formatado <- dados_armas_complementar |>
   dplyr::select(
-    id_bo = controle_interno_sco,
+    controle_interno_sco,
+    circunscricao,
+    data_registro,
+    bairro,
     arma_numero_serie = numero_de_serie,
+    numero_procedimento,
     arma_calibre = calibre,
     arma_marca = marca,
     arma_tipo = tipo,
@@ -36,15 +40,17 @@ dados_armas_formatado <- dados_armas_complementar |>
 # Aplicando regras de negócio
 
 dados_armas_consolidado <- dados_armas_formatado |>
+  gerar_id_bo(base = "rj_complementar") |>
+  gerar_rubrica_formatada() |>
   gerar_flag_tipo_arma_incompativel() |>
   gerar_tipo_arma_final() |>
   gerar_arma_calibre_final() |>
   gerar_arma_marca_final() |> 
-  gerar_sn_disponivel() |> 
-  gerar_numero_serie_formatado() |> 
-  gerar_flag_arma() |> 
+  gerar_sn_disponivel() |>
+  gerar_numero_serie_formatado() |>
+  gerar_flag_arma() |>
   gerar_flag_arma_artesanal() |>
-  gerar_id_arma(base = "rj_complementar") |> 
+  gerar_id_arma(base = "rj_complementar") |>
   gerar_flag_arma_policial(base = "rj_complementar")
 
 # Aplicação das regras Taurus
@@ -70,35 +76,42 @@ armas_final <- dados_armas_consolidado |>
   ) |>
   dplyr::select(
     id_bo,
+    controle_interno_sco,
+    numero_procedimento,
+    rubrica_original = tipo_delito,
+    rubrica_formatada,
+    nome_delegacia = circunscricao,
+    data_ocorrencia_bo = data_registro,
+    bairro,
     id_arma,
-    flag_arma,
-    arma_numero_serie_original = arma_numero_serie,
-    arma_numero_serie_formatado,
-    sn_disponivel,
-    padrao_taurus,
-    arma_ano_fabricacao,
     arma_tipo_original = arma_tipo,
-    tipo_formatado,
+    arma_tipo_formatado = tipo_formatado,
     compatibilidade_tipo,
     flag_tipo_arma_incompativel_calibre,
-    flag_arma_artesanal,
-    arma_calibre_original = arma_calibre,
-    arma_calibre_formatado = calibre_formatado_final,
-    arma_calibre_final,
     arma_marca_original = arma_marca,
     arma_marca_formatado = marca_arma_v2,
     arma_marca_final,
-    arma_pais_fabricacao_original,
-    arma_pais_fabricacao_final = pais_fabricacao,
-    arma_origem,
+    arma_calibre_original = arma_calibre,
+    arma_calibre_formatado = calibre_formatado_final,
+    arma_calibre_final,
     arma_modelo,
-    flag_restrita,
-    patrimoniada,
-    flag_arma_policia_prop,
+    arma_numero_serie_original = arma_numero_serie,
+    arma_numero_serie_formatado,
+    sn_disponivel,
+    arma_classe,
+    flag_arma_de_fogo = flag_arma,
+    flag_arma_artesanal,
+    arma_origem,
+    nome_prop = patrimoniada,
     flag_mdoip,
+    flag_arma_policia_prop,
     flag_calibre_policial,
     flag_arma_policial,
-    flag_arma_original
+    pais_fabricacao_original = arma_pais_fabricacao_original,
+    pais_fabricacao_formatado = pais_fabricacao,
+    arma_ano_fabricacao,
+    padrao_taurus,
+    flag_restrita
   )
 
 # Gerando arquivo
@@ -141,4 +154,3 @@ armas_final |>
     arma_ano_fabricacao
   ) |>
   writexl::write_xlsx("data-raw/dados_rj/validacao/regra_taurus.xlsx")
-
