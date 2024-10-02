@@ -48,27 +48,9 @@ gerar_flag_mdoip <- function(tab) {
 
 gerar_flag_arma_policial <- function(tab, base) {
   if (base == "rj") {
-    tab_mdoip <- ler_depara("crimes") |>
-      dplyr::filter(crime_formatado == "MDOIP")
-
-    tab_ocorrencias_mdoip <- dados_ocorrencias |>
-      dplyr::mutate(
-        flag_mdoip = dplyr::case_when(
-          titulo %in% tab_mdoip$crime_original |
-            titulo_do %in% tab_mdoip$crime_original ~ TRUE,
-          TRUE ~ FALSE
-        )
-      ) |>
-      dplyr::distinct(id_bo = controle, flag_mdoip) |>
-      dplyr::group_by(id_bo) |>
-      dplyr::summarise(
-        flag_mdoip = any(flag_mdoip)
-      )
-
     tab |>
-      dplyr::left_join(
-        tab_ocorrencias_mdoip,
-        by = "id_bo"
+      dplyr::mutate(
+        flag_mdoip = rubrica_formatada == "MDOIP" | rubrica_formatada_do == "MDOIP"
       ) |>
       depara_calibre_policial(base = "rj") |>
       dplyr::mutate(
@@ -92,7 +74,7 @@ gerar_flag_arma_policial <- function(tab, base) {
       )
   } else if (base == "sp") {
     tab |>
-      gerar_flag_arma_policia_prop(base = "sp") |> 
+      gerar_flag_arma_policia_prop(base = "sp") |>
       depara_calibre_policial(base = "sp") |>
       dplyr::mutate(
         flag_arma_policia = dplyr::case_when(

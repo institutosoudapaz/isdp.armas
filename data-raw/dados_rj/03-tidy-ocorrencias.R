@@ -6,51 +6,43 @@ dados_ocorrencias <- readr::read_rds("inst/dados_rj/dados_ocorrencias_rj.rds")
 dados_ocorrencias_formatado <- dados_ocorrencias |> 
   dplyr::mutate(
     uf_fato = "RJ"
-  ) |> 
-  dplyr::select(
-    id_bo = controle,
-    ano_bo = ano,
-    mes_bo = mes,
-    rubrica = titulo,
-    delegacia_nome = dp,
-    cisp,
-    aisp,
-    risp,
-    data_com,
-    data_fato,
-    hora_fato,
-    uf_fato,
-    municipio_fato,
-    bairro_fato,
-    local_fato = local
   )
 
-dados_ocorrencias_final <- dados_ocorrencias_formatado |> 
+dados_ocorrencias_consolidado <- dados_ocorrencias_formatado |>
+  gerar_id_bo(base = "rj") |>
   munifacil::limpar_colunas(
     municipio_fato,
     uf_fato
   ) |> 
   munifacil::incluir_codigo_ibge() |> 
   dplyr::mutate(
-    periodo_fato = categorizar_periodo(hora_fato)
+    periodo_fato = categorizar_periodo(hora_fato),
+    ano = lubridate::year(data_fato)
   ) |> 
+  depara_crime(nome_coluna = "titulo_do") |>
+  dplyr::rename(
+    crime_formatado_do = crime_formatado
+  ) |>
+  depara_crime(nome_coluna = "titulo") |> 
+  gerar_rubrica_formatada(base = "rj")
+
+dados_ocorrencias_final <- dados_ocorrencias_consolidado |>
   dplyr::select(
     id_bo,
-    ano_bo,
-    mes_bo,
-    rubrica,
-    delegacia_nome,
-    cisp,
-    aisp,
-    risp,
-    data_com,
-    data_fato,
-    hora_fato,
-    periodo_fato,
-    municipio_fato,
+    controle,
+    rubrica_original = titulo,
+    rubrica_formatada,
+    rubrica_original_do = titulo_do,
+    rubrica_formatada_do,
+    nome_delegacia = dp,
+    data_ocorrencia_bo = data_fato,
+    ano_ocorrencia_bo = ano,
+    hora_ocorrencia_bo = hora_fato,
+    periodo_ocorrencia_bo = periodo_fato,
+    municipio = municipio_fato,
     cod_ibge = id_municipio,
-    bairro_fato,
-    local_fato
+    bairro = bairro_fato,
+    local
   )
 
 # Gerando arquivo

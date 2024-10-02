@@ -87,7 +87,8 @@ depara_crime <- function(tab, nome_coluna) {
   tab_depara_crime <- ler_depara("crimes") |>
     dplyr::rename_with(
       \(x) ifelse(x == "crime_original", nome_coluna, x)
-    )
+    ) |> 
+    dplyr::distinct()
 
   tab |>
     dplyr::left_join(

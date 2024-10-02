@@ -41,7 +41,7 @@ dados_armas_formatado <- dados_armas_complementar |>
 
 dados_armas_consolidado <- dados_armas_formatado |>
   gerar_id_bo(base = "rj_complementar") |>
-  gerar_rubrica_formatada() |>
+  gerar_rubrica_formatada(base = "rj_complementar") |>
   gerar_flag_tipo_arma_incompativel() |>
   gerar_tipo_arma_final() |>
   gerar_arma_calibre_final() |>
