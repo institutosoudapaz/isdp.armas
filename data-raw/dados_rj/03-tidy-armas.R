@@ -20,17 +20,29 @@ tab_delitos <- dados_ocorrencias |>
   )
 
 tab_outras_info <- dados_ocorrencias |>
+  dplyr::mutate(uf = "RJ") |>
+  munifacil::limpar_colunas(
+    municipio_fato,
+    uf
+  ) |>
+  munifacil::incluir_codigo_ibge() |>
   dplyr::distinct(
     controle,
     ano_bo_original = ano,
     mes_bo = mes,
-    data_bo = data_com,
+    data_bo = data_fato,
     hora_bo = hora_com,
+    municipio = municipio_fato,
+    cod_ibge = id_municipio,
     dp,
     cisp,
     aisp,
     risp
-  ) 
+  ) |> 
+  dplyr::mutate(
+    periodo_bo = categorizar_periodo(hora_bo)
+  )
+
 
 # Fazendo de-paras
 
@@ -90,6 +102,7 @@ armas_final <- dados_armas_consolidado |>
     mes_bo,
     data_bo,
     hora_bo,
+    periodo_bo,
     dp,
     cisp,
     aisp,
