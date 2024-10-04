@@ -19,6 +19,19 @@ tab_delitos <- dados_ocorrencias |>
     )
   )
 
+tab_outras_info <- dados_ocorrencias |>
+  dplyr::distinct(
+    controle,
+    ano_bo_original = ano,
+    mes_bo = mes,
+    data_bo = data_com,
+    hora_bo = hora_com,
+    dp,
+    cisp,
+    aisp,
+    risp
+  ) 
+
 # Fazendo de-paras
 
 dados_armas_formatado <- dados_armas |>
@@ -40,6 +53,10 @@ dados_armas_formatado <- dados_armas |>
   ) |>
   dplyr::left_join(
     tab_delitos,
+    by = "controle"
+  ) |>
+  dplyr::left_join(
+    tab_outras_info,
     by = "controle"
   ) |>
   depara_calibre("arma_calibre") |>
@@ -68,6 +85,15 @@ armas_final <- dados_armas_consolidado |>
     rubrica_formatada,
     rubrica_original_do = titulo_do,
     rubrica_formatada_do,
+    ano_bo_original,
+    ano_bo,
+    mes_bo,
+    data_bo,
+    hora_bo,
+    dp,
+    cisp,
+    aisp,
+    risp,
     id_arma,
     arma_tipo_original = arma_tipo,
     arma_tipo_formatado = tipo_formatado,
