@@ -31,7 +31,10 @@ dados_armas_formatado <- dados_armas_complementar |>
         tolower() |>
         stringr::str_squish()
     ),
-    arma_pais_fabricacao_original = toupper(arma_pais_fabricacao_original)
+    arma_pais_fabricacao_original = toupper(arma_pais_fabricacao_original),
+    ano_bo = lubridate::year(data_registro),
+    hora_ocorrencia_bo = hms::as_hms(data_registro),
+    periodo_ocorrencia_bo = categorizar_periodo(as.character(hora_ocorrencia_bo))
   ) |>
   depara_calibre("arma_calibre") |>
   depara_marca("arma_marca") |>
@@ -45,7 +48,7 @@ dados_armas_consolidado <- dados_armas_formatado |>
   gerar_flag_tipo_arma_incompativel() |>
   gerar_tipo_arma_final() |>
   gerar_arma_calibre_final() |>
-  gerar_arma_marca_final() |> 
+  gerar_arma_marca_final() |>
   gerar_sn_disponivel() |>
   gerar_numero_serie_formatado() |>
   gerar_flag_arma() |>
@@ -82,6 +85,9 @@ armas_final <- dados_armas_consolidado |>
     rubrica_formatada,
     nome_delegacia = circunscricao,
     data_ocorrencia_bo = data_registro,
+    ano_bo,
+    hora_ocorrencia_bo,
+    periodo_ocorrencia_bo,
     bairro,
     id_arma,
     arma_tipo_original = arma_tipo,
