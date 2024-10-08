@@ -10,7 +10,7 @@ gerar_flag_tipo_arma_incompativel <- function(tab) {
     )
 }
 
-gerar_tipo_arma_final <- function(tab) {
+gerar_arma_tipo_final <- function(tab) {
   tab |>
     dplyr::rename(
       compatibilidade_tipo = tipo_arma_calibre
