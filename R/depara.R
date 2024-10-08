@@ -1,3 +1,16 @@
+#' Ler De/Para
+#'
+#' Esta função lê uma aba específica de um arquivo Excel que contém 
+#' as tabelas de de/para.
+#'
+#' @param aba Nome da aba a ser lida no arquivo Excel.
+#' 
+#' @return Um data frame contendo os dados da aba especificada.
+#' 
+#' @examples
+#' \dontrun{
+#'   dados <- ler_depara("calibre")
+#' }
 ler_depara <- function(aba) {
   readxl::read_excel(
     system.file(
@@ -8,6 +21,18 @@ ler_depara <- function(aba) {
   )
 }
 
+#' Funções de-para
+#'
+#' Estas funções realizam a junção de uma tabela com uma tabela de "de-para".
+#'
+#' @param tab Data frame. A tabela que será unida com a tabela de "de-para".
+#' @param nome_coluna Character. O nome da coluna na tabela `tab` que contém a chave para o de-para.
+#' @param base Character. A base de dados que será utilizada para o de-para. Pode ser "rj_complementar" ou "rj_principal".
+#'
+#' @return Data frame. A tabela original `tab` com as novas colunas provinientes do de-para.
+#'
+#'
+#' @export
 depara_tipo <- function(tab, nome_coluna = "arma_tipo") {
   tab_depara_tipo <- ler_depara("tipo") |>
     dplyr::distinct(tipo, .keep_all = TRUE)
@@ -26,6 +51,7 @@ depara_tipo <- function(tab, nome_coluna = "arma_tipo") {
     )
 }
 
+#' @rdname depara_tipo
 depara_calibre <- function(tab, nome_coluna = "calibre") {
   tab_depara_calibre <- ler_depara("calibre") |>
     dplyr::distinct(calibre, .keep_all = TRUE)
@@ -44,6 +70,7 @@ depara_calibre <- function(tab, nome_coluna = "calibre") {
     )
 }
 
+#' @rdname depara_tipo
 depara_calibre_policial <- function(tab, base) {
   if (base == "rj_complementar") {
     tab_depara_calibre <- ler_depara("calibre_arma_policial") |>
@@ -66,6 +93,7 @@ depara_calibre_policial <- function(tab, base) {
   }
 }
 
+#' @rdname depara_tipo
 depara_marca <- function(tab, nome_coluna = "marca") {
   tab_depara_marca <- ler_depara("marca")
 
@@ -83,6 +111,7 @@ depara_marca <- function(tab, nome_coluna = "marca") {
     )
 }
 
+#' @rdname depara_tipo
 depara_crime <- function(tab, nome_coluna) {
   tab_depara_crime <- ler_depara("crimes") |>
     dplyr::rename_with(
