@@ -2,3 +2,6 @@
 ^\.Rproj\.user$
 ^data-raw$
 ^README\.Rmd$
+.vscode
+inst/dados_rj
+inst/dados_sp

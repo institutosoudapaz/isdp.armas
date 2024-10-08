@@ -78,7 +78,7 @@ dados_armas_sp <- dados_sp |>
 dados_armas_sp_consolidado <- dados_armas_sp |>
   gerar_flag_tipo_arma_incompativel() |>
   gerar_arma_marca_final() |>
-  gerar_tipo_arma_final() |>
+  gerar_arma_tipo_final() |>
   gerar_arma_calibre_final() |>
   gerar_sn_disponivel() |>
   gerar_flag_arma_artesanal() |>

@@ -57,7 +57,7 @@ writexl::write_xlsx(
 # Geolocalização
 
 dados_ocorrencias_enderecos <- dados_ocorrencias_final |> 
-  montar_endereco_rj() |> 
+  montar_endereco(base = "rj") |> 
   dplyr::select(id_bo, endereco)
 
 
