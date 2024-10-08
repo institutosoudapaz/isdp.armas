@@ -209,7 +209,7 @@ dados_sp <- dplyr::bind_rows(
   dplyr::arrange(id_bo)
 
 
-readr::write_rds(dados_sp, "inst/dados_sp/dados_sp.rds", compress = "xz")
+readr::write_rds(dados_sp, "data-raw/dados_sp/dados_sp.rds", compress = "xz")
 
 
 # DOCUMENTAÇÃO

@@ -22,7 +22,7 @@ dados_armas <- dplyr::bind_rows(
 ) # incluir cod ibge
 
 dados_armas |>
-  readr::write_rds("inst/dados_rj/dados_armas_rj.rds")
+  readr::write_rds("data-raw/dados_rj/dados_armas_rj.rds")
 
 # Dados ocorrências
 
@@ -55,7 +55,7 @@ dados_ocorrencias <- dplyr::bind_rows(
 ) # incluir cod ibge
 
 dados_ocorrencias |>
-  readr::write_rds("inst/dados_rj/dados_ocorrencias_rj.rds")
+  readr::write_rds("data-raw/dados_rj/dados_ocorrencias_rj.rds")
 
 
 # Dados armas complementar
@@ -108,6 +108,5 @@ dados_armas_complementar <- dplyr::bind_rows(
   dados_armas_complementar_2022
 )
 
-
 dados_armas_complementar |>
-  readr::write_rds("inst/dados_rj/dados_armas_complementar.rds")
+  readr::write_rds("data-raw/dados_rj/dados_armas_complementar.rds")

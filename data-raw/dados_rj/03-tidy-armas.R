@@ -1,7 +1,7 @@
 devtools::load_all()
 
-dados_armas <- readr::read_rds("inst/dados_rj/dados_armas_rj.rds")
-dados_ocorrencias <- readr::read_rds("inst/dados_rj/dados_ocorrencias_rj.rds")
+dados_armas <- readr::read_rds("data-raw/dados_rj/dados_armas_rj.rds")
+dados_ocorrencias <- readr::read_rds("data-raw/dados_rj/dados_ocorrencias_rj.rds")
 
 tab_delitos <- dados_ocorrencias |>
   depara_crime(nome_coluna = "titulo_do") |>
@@ -131,7 +131,7 @@ armas_final <- dados_armas_consolidado |>
 data <- stringr::str_remove_all(Sys.Date(), "-")
 writexl::write_xlsx(
   armas_final,
-  glue::glue("inst/dados_rj/{data}_dados_armas.xlsx")
+  glue::glue("data-raw/dados_rj/validacao/{data}_dados_armas.xlsx")
 )
 
 

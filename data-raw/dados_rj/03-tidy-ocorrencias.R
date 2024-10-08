@@ -1,6 +1,6 @@
 devtools::load_all()
 
-dados_ocorrencias <- readr::read_rds("inst/dados_rj/dados_ocorrencias_rj.rds")
+dados_ocorrencias <- readr::read_rds("data-raw/dados_rj/dados_ocorrencias_rj.rds")
 # dplyr::glimpse(dados_ocorrencias)
 
 dados_ocorrencias_formatado <- dados_ocorrencias |> 
@@ -50,7 +50,7 @@ dados_ocorrencias_final <- dados_ocorrencias_consolidado |>
 data <- stringr::str_remove_all(Sys.Date(), "-")
 writexl::write_xlsx(
   dados_ocorrencias_final,
-  glue::glue("inst/dados_rj/{data}_dados_ocorrencias.xlsx")
+  glue::glue("data-raw/dados_rj/validacao/{data}_dados_ocorrencias.xlsx")
 )
 
 
@@ -77,7 +77,7 @@ dados_ocorrencias_geolocalizadas <- dados_ocorrencias_enderecos |>
 data <- stringr::str_remove_all(Sys.Date(), "-")
 writexl::write_xlsx(
   dados_ocorrencias_geolocalizadas,
-  glue::glue("inst/dados_rj/{data}_dados_ocorrencias_geolocalizadas.xlsx")
+  glue::glue("data-raw/dados_rj/validacao/{data}_dados_ocorrencias_geolocalizadas.xlsx")
 )
 
 # dados_ocorrencias_geolocalizadas |> 

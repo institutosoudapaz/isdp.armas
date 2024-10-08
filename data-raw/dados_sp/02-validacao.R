@@ -1,4 +1,4 @@
-dados_sp <- readr::read_rds("inst/dados_sp/dados_sp.rds")
+dados_sp <- readr::read_rds("data-raw/dados_sp/dados_sp.rds")
 
 # Número por ano
 

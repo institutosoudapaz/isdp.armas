@@ -22,4 +22,4 @@ centros_latlon <- tabela_dados_dps |>
     purrr::map_dfr(centroides, processa_centroide)
   )
 
-saveRDS(centros_latlon, "inst/dados_sp/centroides_dps.rds")
+saveRDS(centros_latlon, "data-raw/dados_sp/centroides_dps.rds")

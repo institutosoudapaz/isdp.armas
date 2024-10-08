@@ -1,6 +1,6 @@
 devtools::load_all()
 
-dados_armas <- readr::read_rds("inst/dados_sp/dados_sp.rds")
+dados_armas <- readr::read_rds("data-raw/dados_sp/dados_sp.rds")
 
 dados_armas_formatado <- dados_armas |>
   dplyr::select(
@@ -73,7 +73,7 @@ dados_armas_formatado <- dados_armas |>
   depara_marca("arma_marca") |>
   depara_tipo("arma_tipo")
 
-  # Aplicando regras de negócio
+# Aplicando regras de negócio
 
 dados_armas_consolidado <- dados_armas_formatado |>
   gerar_flag_tipo_arma_incompativel() |>
@@ -135,15 +135,14 @@ armas_final <- dados_armas_consolidado |>
     flag_arma_policia_prop,
     flag_arma_policia_prop_indisp,
     flag_arma_policia
-  ) |>
-  dplyr::group_by(id_bo)
+  )
 
 # Gerando arquivo
 
-#data <- stringr::str_remove_all(Sys.Date(), "-")
+data <- stringr::str_remove_all(Sys.Date(), "-")
 writexl::write_xlsx(
   armas_final,
-  glue::glue("inst/dados_sp/{data}_dados_armas.xlsx")
+  glue::glue("data-raw/dados_sp/validacao/{data}_dados_armas.xlsx")
 )
 
 # Validação
@@ -179,13 +178,3 @@ armas_final |>
   ) |>
   writexl::write_xlsx("data-raw/dados_sp/validacao/regra_taurus.xlsx")
 
-# base armas completa -----------------------------------------------------
-
-armas_final |>
-  dplyr::group_by(id_bo) |>
-  dplyr::mutate(cont_arma = dplyr::n()) |>
-  dplyr::left_join(
-    readRDS("inst/dados_sp/dados_ocorrencias_sp.rds") |>
-      dplyr::select(-cont_arma)
-  ) |>
-  writexl::write_xlsx("inst/dados_sp/20241004_armas_consolidado.xlsx")

@@ -1,4 +1,4 @@
-dados_sp <- readr::read_rds("inst/dados_sp/dados_sp.rds")
+dados_sp <- readr::read_rds("data-raw/dados_sp/dados_sp.rds")
 
 dados_ocorrencias_sp <- dados_sp |>
   dplyr::select(
@@ -281,9 +281,9 @@ dados_ocorrencias_sp_tidy |>
     latitude_final = coalesce(latitude, latitude_logr, latitude_cep),
     longitude_final = coalesce(longitude, longitude_logr, longitude_cep)
   ) |>
-  writexl::write_xlsx("inst/dados_sp/20240913_dados_ocorrencias_sem_lat_lon.xlsx")
+  writexl::write_xlsx("data-raw/dados_sp/20240913_dados_ocorrencias_sem_lat_lon.xlsx")
 
-latlons_completos <- readRDS("inst/dados_sp/dados_ocorrencias_sp_latlon.rds") |>
+latlons_completos <- readRDS("data-raw/dados_sp/dados_ocorrencias_sp_latlon.rds") |>
   select(id_bo, latitude_cep, longitude_cep, latitude_logr, longitude_logr)
 
 dados_ocorrencias_sp_tidy |>
@@ -304,7 +304,7 @@ dados_ocorrencias_sp_tidy |>
     latitude_final = coalesce(latitude, latitude_logr, latitude_cep),
     longitude_final = coalesce(longitude, longitude_logr, longitude_cep)
   ) |>
-  readr::write_rds("inst/dados_sp/dados_ocorrencias_sp.rds", compress = "xz")
+  readr::write_rds("data-raw/dados_sp/dados_ocorrencias_sp.rds", compress = "xz")
 
 dados_ocorrencias_sp_tidy |>
   # left_join(
@@ -324,4 +324,4 @@ dados_ocorrencias_sp_tidy |>
     latitude_final = coalesce(latitude, latitude_logr, latitude_cep),
     longitude_final = coalesce(longitude, longitude_logr, longitude_cep)
   ) |>
-  writexl::write_xlsx("inst/dados_sp/20240930_ocorrencias.xlsx")
+  writexl::write_xlsx("data-raw/dados_sp/validacao/20240930_ocorrencias.xlsx")

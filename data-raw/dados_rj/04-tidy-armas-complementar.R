@@ -1,6 +1,6 @@
 devtools::load_all()
 
-dados_armas_complementar <- readr::read_rds("inst/dados_rj/dados_armas_complementar.rds")
+dados_armas_complementar <- readr::read_rds("data-raw/dados_rj/dados_armas_complementar.rds")
 
 # Fazendo de-paras
 
@@ -125,7 +125,7 @@ armas_final <- dados_armas_consolidado |>
 data <- stringr::str_remove_all(Sys.Date(), "-")
 writexl::write_xlsx(
   armas_final,
-  glue::glue("inst/dados_rj/{data}_dados_armas_complementar.xlsx")
+  glue::glue("data-raw/dados_rj/validacao/{data}_dados_armas_complementar.xlsx")
 )
 
 # Validação
