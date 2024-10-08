@@ -5,13 +5,21 @@ Authors@R:
     person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Depends: 
     R (>= 2.10)
+Imports: 
+    cli,
+    dplyr,
+    purrr,
+    readr,
+    readxl,
+    stringr,
+    tidygeocoder,
+    vctrs
 LazyData: true
 URL: https://github.com/institutosoudapaz/isdp.armas
 BugReports: https://github.com/institutosoudapaz/isdp.armas/issues

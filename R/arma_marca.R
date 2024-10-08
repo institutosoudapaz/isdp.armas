@@ -12,13 +12,11 @@
 #' \itemize{
 #'   \item "taur" -> "taurus"
 #'   \item "ross" -> "rossi"
-#'   \item "glo[ck]" -> "glock"
+#'   \item "glo\[ck\]" -> "glock"
 #'   \item "smith" -> "s&w"
 #' }
 #' Se nenhum desses padrões for detectado, a função atribui o valor da coluna `marca_arma_v2` (convertido para minúsculas) à `arma_marca_final`.
 #'
-#' @import dplyr
-#' @import stringr
 #' @export
 gerar_arma_marca_final <- function(tab) {
   tab |>

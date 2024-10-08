@@ -22,7 +22,7 @@ Ela faz isso definindo uma marca específica à arma quando um certo padrão é 
 \itemize{
 \item "taur" -> "taurus"
 \item "ross" -> "rossi"
-\item "glo\link{ck}" -> "glock"
+\item "glo[ck]" -> "glock"
 \item "smith" -> "s&w"
 }
 Se nenhum desses padrões for detectado, a função atribui o valor da coluna \code{marca_arma_v2} (convertido para minúsculas) à \code{arma_marca_final}.
