@@ -110,6 +110,7 @@ armas_final <- dados_armas_consolidado |>
   dplyr::select(
     id_bo,
     id_arma,
+    flag_flagrante,
     cont_arma,
     arma_calibre_original = arma_calibre,
     arma_calibre_formatado = calibre_formatado_final,
@@ -126,6 +127,7 @@ armas_final <- dados_armas_consolidado |>
     compatibilidade_tipo,
     flag_tipo_arma_incompativel_calibre,
     arma_ano_fabricacao,
+    flag_padrao = padrao_taurus,
     flag_arma,
     flag_arma_artesanal,
     arma_proprietario_nome,
@@ -133,11 +135,12 @@ armas_final <- dados_armas_consolidado |>
     flag_arma_policia_prop,
     flag_arma_policia_prop_indisp,
     flag_arma_policia
-  )
+  ) |>
+  dplyr::group_by(id_bo)
 
 # Gerando arquivo
 
-data <- stringr::str_remove_all(Sys.Date(), "-")
+#data <- stringr::str_remove_all(Sys.Date(), "-")
 writexl::write_xlsx(
   armas_final,
   glue::glue("inst/dados_sp/{data}_dados_armas.xlsx")
@@ -179,6 +182,10 @@ armas_final |>
 # base armas completa -----------------------------------------------------
 
 armas_final |>
-  left_join(
-    readRDS("inst/dados_sp/dados_ocorrencias_sp.rds")
-  )
+  dplyr::group_by(id_bo) |>
+  dplyr::mutate(cont_arma = dplyr::n()) |>
+  dplyr::left_join(
+    readRDS("inst/dados_sp/dados_ocorrencias_sp.rds") |>
+      dplyr::select(-cont_arma)
+  ) |>
+  writexl::write_xlsx("inst/dados_sp/20241004_armas_consolidado.xlsx")
