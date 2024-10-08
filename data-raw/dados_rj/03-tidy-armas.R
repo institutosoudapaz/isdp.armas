@@ -30,7 +30,7 @@ tab_outras_info <- dados_ocorrencias |>
     controle,
     ano_bo_original = ano,
     mes_bo = mes,
-    data_bo = data_fato,
+    data_bo = data_com,
     hora_bo = hora_com,
     municipio = municipio_fato,
     cod_ibge = id_municipio,
