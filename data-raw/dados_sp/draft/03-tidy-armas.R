@@ -1,4 +1,4 @@
-dados_sp <- readr::read_rds("inst/dados_sp/dados_sp.rds")
+dados_sp <- readr::read_rds("data-raw/dados_sp/dados_sp.rds")
 
 library(tidyverse)
 
@@ -298,9 +298,9 @@ armas_final <- dados_armas_sp_consolidado_leg |>
   ) |>
   distinct(id_bo, id_arma, .keep_all = TRUE)
 
-# readr::write_rds(armas_final, "inst/dados_sp/dados_armas_sp.rds", compress = "xz")
+# readr::write_rds(armas_final, "data-raw/dados_sp/dados_armas_sp.rds", compress = "xz")
 
-writexl::write_xlsx(armas_final, "inst/dados_sp/20240902_dados_armas.xlsx")
+writexl::write_xlsx(armas_final, "data-raw/dados_sp/20240902_dados_armas.xlsx")
 
 
 armas_final |>
@@ -311,7 +311,7 @@ armas_final |>
     soma = sum(is.na(arma_calibre_final))
   )
 
-readxl::read_excel("inst/dados_sp/dados_armas_bruto.xlsx") |>
+readxl::read_excel("data-raw/dados_sp/dados_armas_bruto.xlsx") |>
   summarise(
     soma = sum(is.na(arma_calibre_final))
   )

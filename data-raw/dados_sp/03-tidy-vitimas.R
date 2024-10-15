@@ -1,4 +1,4 @@
-dados_sp <- readr::read_rds("inst/dados_sp/dados_sp.rds")
+dados_sp <- readr::read_rds("data-raw/dados_sp/dados_sp.rds")
 
 dados_vitimas_sp <- dados_sp |>
   dplyr::mutate(
@@ -51,5 +51,5 @@ dados_vitimas_sp <- dados_sp |>
   dplyr::distinct()
 
 dados_vitimas_sp |>
-  readr::write_rds("inst/dados_sp/dados_vitimas_sp.rds", compress = "xz")
+  readr::write_rds("data-raw/dados_sp/dados_vitimas_sp.rds", compress = "xz")
 

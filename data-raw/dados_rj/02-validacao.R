@@ -1,6 +1,6 @@
 # Dados armas ----------------------------------------------------------------
 
-dados_armas <- readr::read_rds("inst/dados_rj/dados_armas_rj.rds")
+dados_armas <- readr::read_rds("data-raw/dados_rj/dados_armas_rj.rds")
 
 dplyr::glimpse(dados_armas)
 
@@ -67,7 +67,7 @@ dados_armas |>
 
 # Dados ocorrências ----------------------------------------------------------
 
-dados_ocorrencias <- readr::read_rds("inst/dados_rj/dados_ocorrencias_rj.rds")
+dados_ocorrencias <- readr::read_rds("data-raw/dados_rj/dados_ocorrencias_rj.rds")
 
 dplyr::glimpse(dados_ocorrencias)
 
@@ -113,8 +113,8 @@ dados_ocorrencias |>
 
 # Lista de crimes -----------------------------------------------------------
 
-dados_ocorrencias <- readr::read_rds("inst/dados_rj/dados_ocorrencias_rj.rds")
-dados_armas_complementar <- readr::read_rds("inst/dados_rj/dados_armas_complementar.rds")
+dados_ocorrencias <- readr::read_rds("data-raw/dados_rj/dados_ocorrencias_rj.rds")
+dados_armas_complementar <- readr::read_rds("data-raw/dados_rj/dados_armas_complementar.rds")
 
 dplyr::bind_rows(
   dados_ocorrencias |>
@@ -149,7 +149,7 @@ dplyr::select(
 
 # Lista de valores da coluna patrimoniada ------------------------------------
 
-dados_armas_complementar <- readr::read_rds("inst/dados_rj/dados_armas_complementar.rds")
+dados_armas_complementar <- readr::read_rds("data-raw/dados_rj/dados_armas_complementar.rds")
 
 dados_armas_complementar |>
   dplyr::count(patrimoniada, sort = TRUE) |> 
